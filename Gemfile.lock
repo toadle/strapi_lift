@@ -1,0 +1,50 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (7.1.5.1)
+      base64
+      benchmark (>= 0.3)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      connection_pool (>= 2.2.5)
+      drb
+      i18n (>= 1.6, < 2)
+      logger (>= 1.4.2)
+      minitest (>= 5.1)
+      mutex_m
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0)
+    base64 (0.2.0)
+    benchmark (0.4.0)
+    bigdecimal (3.1.9)
+    concurrent-ruby (1.3.5)
+    connection_pool (2.5.0)
+    dotenv (2.8.1)
+    drb (2.2.1)
+    faraday (2.8.1)
+      base64
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-net_http (3.0.2)
+    i18n (1.14.7)
+      concurrent-ruby (~> 1.0)
+    logger (1.6.6)
+    minitest (5.25.4)
+    mutex_m (0.3.0)
+    ruby2_keywords (0.0.5)
+    securerandom (0.3.2)
+    thor (1.3.2)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activesupport (~> 7.1)
+  dotenv (~> 2.8)
+  faraday (~> 2.8)
+  thor
+
+BUNDLED WITH
+   2.1.4
