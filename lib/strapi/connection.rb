@@ -10,11 +10,13 @@ module Strapi
       @conn = Faraday.new(
         url: ENV.fetch("STRAPI_URL"),
         headers: {
-          Authorization: "Basic #{ENV.fetch("STRAPI_API_TOKEN")}",
-          "Content-Type": "application/json"
+          Authorization: "Bearer #{ENV.fetch("STRAPI_API_TOKEN")}"
         }
       ) do |connection|
         connection.adapter Faraday.default_adapter
+        connection.request :json
+        connection.response :json
+        connection.response :raise_error
       end
     end
   end

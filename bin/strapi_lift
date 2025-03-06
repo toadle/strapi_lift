@@ -4,7 +4,12 @@ require "thor"
 require "json"
 require 'dotenv/load'
 require 'active_support/all'
-require_relative "../lib/entries_importer"
+require 'representable'
+require "pry"
+
+Dir.glob(File.expand_path("../lib/**/*.rb", __dir__)).sort.each do |file|
+  require file
+end
 
 class Cli < Thor
   desc "import contentful_export_json_file.json", "Import contentful export JSON file"
@@ -16,7 +21,8 @@ class Cli < Thor
 
     begin
       json_data = JSON.parse(File.read(file_name))
-      EntriesImporter.new("5duKiNPsR20mgISegMYmwK", "articles").run(json_data)
+      json_data = json_data.deep_transform_keys { |key| key.to_s.underscore }
+      EntriesImporter.new.run(json_data.fetch("entries"))
 
     rescue JSON::ParserError => e
       puts "Error parsing JSON: #{e.message}"
