@@ -1,3 +1,5 @@
+require_relative 'link_representer'
+
 module Contentful
   class ArticleRepresenter < Representable::Decorator
     include Representable::JSON
@@ -21,6 +23,8 @@ module Contentful
           property property_name, as: :de_de
         end
       end
+
+      property :category, decorator: Contentful::LinkRepresenter, class: Contentful::CategoryLink
     end
 
     nested :sys do

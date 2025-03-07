@@ -15,3 +15,13 @@ gem "activesupport", "~> 7.1"
 gem "representable", "~> 3.2"
 
 gem "pry-byebug", "~> 3.10"
+
+gem "rspec", "~> 3.13"
+
+gem "multi_json", "~> 1.15"
+
+gem "activemodel", "~> 7.1"
+
+gem "faraday-multipart", "~> 1.1"
+
+gem "mime-types", "~> 3.6"
