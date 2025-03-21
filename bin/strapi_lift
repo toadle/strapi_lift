@@ -24,9 +24,10 @@ class Cli < Thor
       end
 
       begin
-        entries_data = JSON.parse(File.read(options[:entries]))
-        entries_data = entries_data.deep_transform_keys { |key| key.to_s.underscore }
-        EntriesImporter.new.run(entries_data.fetch("entries"))
+        $entries_data = JSON.parse(File.read(options[:entries]))
+        $entries_data = $entries_data.deep_transform_keys { |key| key.to_s.underscore }.fetch("entries")
+
+        EntriesImporter.new.run($entries_data)
       rescue JSON::ParserError => e
         puts "Error parsing entries JSON: #{e.message}"
         exit(1)
@@ -45,10 +46,10 @@ class Cli < Thor
       end
 
       begin
-        assets_data = JSON.parse(File.read(options[:assets]))
-        assets_data = assets_data.deep_transform_keys { |key| key.to_s.underscore }
+        $assets_data = JSON.parse(File.read(options[:assets]))
+        $assets_data = $assets_data.deep_transform_keys { |key| key.to_s.underscore }
 
-        AssetsImporter.new.run(assets_data.fetch("assets"), options[:assets_folder])
+        AssetsImporter.new.run($assets_data.fetch("assets"), options[:assets_folder])
       rescue JSON::ParserError => e
         puts "Error parsing assets JSON: #{e.message}"
         exit(1)

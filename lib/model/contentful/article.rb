@@ -1,17 +1,50 @@
 module Contentful
   class Article
-    attr_accessor :contentful_id, :title, :slug, :content, :category, :sponsored_article, :affiliate_notice_hidden, :teaser_image, :seo_text, :meta_keywords, :meta_description, :meta_robots, :date, :display_toc, :vg_wort_pixel_url, :image_gallery, :authors, :sources, :related_articles, :breadcrumbs, :strapi_id
+    include StrapiConnected
+    attr_accessor :contentful_id
+    attr_accessor :title
+    attr_accessor :slug
+    attr_accessor :content
+    attr_accessor :category_link
+    attr_accessor :sponsored_article
+    attr_accessor :affiliate_notice_hidden
+    attr_accessor :teaser_image
+    attr_accessor :seo_text
+    attr_accessor :meta_keywords
+    attr_accessor :meta_description
+    attr_accessor :meta_robots
+    attr_accessor :date
+    attr_accessor :display_toc
+    attr_accessor :vg_wort_pixel_url
+    attr_accessor :image_gallery
+    attr_accessor :authors
+    attr_accessor :sources
+    attr_accessor :related_articles
+    attr_accessor :breadcrumbs
+    attr_accessor :strapi_id
 
-    def connections_data(contentful_categories)
-      category_id = category.id
-      category_strapi_id = contentful_categories.find { |cat| cat.contentful_id == category_id }&.strapi_id
-      raise StandardError, "Category with ID #{category_id} not found to establish connection." unless category_strapi_id
+    def save!
+      @category = category_link.resolve_link
+      @category.save!
 
+      save_to_strapi! unless present_in_strapi?
+      update_connections!
+    end
+
+    def connections_data
       {
         "category" => {
-          "connect" => [category_strapi_id]
+          "connect" => [@category.strapi_id],
         }
       }
+    end
+
+    def strapi_api_path
+      "/api/articles"
+    end
+  
+    def strapi_representer_class
+      Strapi::ArticleRepresenter
     end
   end
 end

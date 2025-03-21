@@ -2,6 +2,7 @@ require "active_model"
 
 module Contentful
   class Category
+    include StrapiConnected
     include ActiveModel::Model
 
     attr_accessor :title
@@ -17,5 +18,17 @@ module Contentful
     attr_accessor :vg_wort_pixel_url
     attr_accessor :contentful_id
     attr_accessor :strapi_id
+
+    def save!
+      save_to_strapi! unless present_in_strapi?
+    end
+
+    def strapi_api_path
+      "/api/categories"
+    end
+  
+    def strapi_representer_class
+      Strapi::CategoryRepresenter
+    end
   end
 end

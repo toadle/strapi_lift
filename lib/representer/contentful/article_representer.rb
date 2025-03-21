@@ -24,7 +24,7 @@ module Contentful
         end
       end
 
-      property :category, decorator: Contentful::LinkRepresenter, class: Contentful::CategoryLink
+      property :category_link, decorator: Contentful::LinkRepresenter, class: Contentful::CategoryLink, as: :category
     end
 
     nested :sys do
