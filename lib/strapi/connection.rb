@@ -23,6 +23,10 @@ module Strapi
       end
 
       def upload_file(file_path)
+        unless File.exist?(file_path) && File.size(file_path).positive?
+          raise "File not found or empty: #{file_path}"
+        end
+
         mime_type = MIME::Types.type_for(file_path).first.to_s || "application/octet-stream"
         file = Faraday::UploadIO.new(file_path, mime_type)
         response = conn.post("/api/upload") do |req|

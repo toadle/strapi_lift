@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "tags": [],
+    "concepts": []
+  },
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "01e3d4iatuxi"
+      }
+    },
+    "id": "7wqPYZhKCc8sEYSK0UYUMW",
+    "type": "Asset",
+    "createdAt": "2015-09-08T10:00:43.025Z",
+    "updatedAt": "2015-09-08T10:00:47.656Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "publishedVersion": 2,
+    "publishedAt": "2015-09-08T10:00:47.605Z",
+    "firstPublishedAt": "2015-09-08T10:00:47.605Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "3uRyZjPepZB5ZKOihyqgne"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "3uRyZjPepZB5ZKOihyqgne"
+      }
+    },
+    "publishedCounter": 1,
+    "version": 3,
+    "publishedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "3uRyZjPepZB5ZKOihyqgne"
+      }
+    },
+    "urn": "crn:contentful:::content:spaces/01e3d4iatuxi/environments/master/assets/7wqPYZhKCc8sEYSK0UYUMW"
+  },
+  "fields": {
+    "title": {
+      "de-de": "Braut Fascinator il 570xN.410788632 mrki"
+    },
+    "description": {
+      "de-de": "Es ist ein Bild eines Braut-Fascinators, das in einem Online-Shop verkauft wird."
+    },
+    "file": {
+      "de-de": {
+        "url": "//images.ctfassets.net/01e3d4iatuxi/7wqPYZhKCc8sEYSK0UYUMW/60cd5c83cbe39654e0f849825f484cba/Braut_Fascinator_il_570xN.410788632_mrki.jpg",
+        "details": {
+          "size": 61315,
+          "image": {
+            "width": 570,
+            "height": 774
+          }
+        },
+        "fileName": "Braut_Fascinator_il_570xN.410788632_mrki.jpg",
+        "contentType": "image/jpeg"
+      }
+    }
+  }
+}
