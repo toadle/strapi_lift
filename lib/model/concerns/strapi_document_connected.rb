@@ -1,4 +1,4 @@
-module StrapiConnected
+module StrapiDocumentConnected
   extend ActiveSupport::Concern
 
   REQUIRED_INSTANCE_METHODS = %i[
@@ -13,7 +13,7 @@ module StrapiConnected
   def ensure_strapi_methods!
     missing = REQUIRED_INSTANCE_METHODS.reject { |m| respond_to?(m) }
     unless missing.empty?
-      raise NotImplementedError, "Missing required method(s) for StrapiSyncable: #{missing.join(', ')}"
+      raise NotImplementedError, "Missing required method(s) for StrapiDocumentConnected: #{missing.join(', ')}"
     end
   end
 

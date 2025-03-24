@@ -13,7 +13,7 @@ RSpec.describe  Contentful::AssetRepresenter do
     expect(asset.description).to eq("Es ist ein Bild eines Braut-Fascinators, das in einem Online-Shop verkauft wird.")
     expect(asset.file_name).to eq("Braut_Fascinator_il_570xN.410788632_mrki.jpg")
     expect(asset.space_id).to eq("01e3d4iatuxi")
-    expect(asset.contenful_id).to eq("7wqPYZhKCc8sEYSK0UYUMW")
+    expect(asset.contentful_id).to eq("7wqPYZhKCc8sEYSK0UYUMW")
     expect(asset.url).to eq("//images.ctfassets.net/01e3d4iatuxi/7wqPYZhKCc8sEYSK0UYUMW/60cd5c83cbe39654e0f849825f484cba/Braut_Fascinator_il_570xN.410788632_mrki.jpg")
   end
 end

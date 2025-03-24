@@ -9,7 +9,15 @@ RSpec.describe  Contentful::ArticleRepresenter do
     article = Contentful::Article.new
     Contentful::ArticleRepresenter.new(article).from_hash(article_data)
 
-    expect(article.category).to be_a(Contentful::CategoryLink)
-    expect(article.category.id).to eq("4QOCXj1qeAO0UeCmykS6uc")
+    expect(article.category_link).to be_a(Contentful::CategoryLink)
+    expect(article.category_link.id).to eq("4QOCXj1qeAO0UeCmykS6uc")
+  end
+
+  it "correctly populates the teaser image link" do
+    article = Contentful::Article.new
+    Contentful::ArticleRepresenter.new(article).from_hash(article_data)
+
+    expect(article.teaser_image_link).to be_a(Contentful::AssetLink)
+    expect(article.teaser_image_link.id).to eq("4CIETmeecok2S6AMOQEaGG")
   end
 end

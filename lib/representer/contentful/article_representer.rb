@@ -1,4 +1,5 @@
-require_relative 'link_representer'
+require_relative 'entry_link_representer'
+require_relative 'asset_link_representer'
 
 module Contentful
   class ArticleRepresenter < Representable::Decorator
@@ -24,7 +25,8 @@ module Contentful
         end
       end
 
-      property :category_link, decorator: Contentful::LinkRepresenter, class: Contentful::CategoryLink, as: :category
+      property :category_link, decorator: Contentful::EntryLinkRepresenter, class: Contentful::CategoryLink, as: :category
+      property :teaser_image_link, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :teaser_image
     end
 
     nested :sys do

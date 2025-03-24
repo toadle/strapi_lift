@@ -1,5 +1,5 @@
 module Contentful
-  class LinkRepresenter < Representable::Decorator
+  class AssetLinkRepresenter < Representable::Decorator
     include Representable::JSON
 
     nested :de_de do

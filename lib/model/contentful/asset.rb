@@ -2,12 +2,16 @@ require 'uri'
 
 module Contentful
   class Asset
-    attr_accessor :title, :description, :file_name, :space_id, :contenful_id, :url
+    include StrapiFileConnected
 
-    def discover_file_path(base_path)
-      file_path = File.join(base_path, URI.parse(url).path)
-      raise "File not found: #{file_path}" unless File.exist?(file_path)
-      file_path
+    attr_accessor :title, :description, :space_id, :contentful_id, :url, :strapi_file_id
+
+    def save!
+      save_to_strapi! unless present_in_strapi?
+    end
+
+    def file_name
+      File.basename(URI.parse(url).path)
     end
   end
 end

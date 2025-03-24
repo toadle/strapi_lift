@@ -13,47 +13,29 @@ end
 
 class Cli < Thor
   desc "import", "Import contentful export JSON file"
-  method_option :entries, type: :string, desc: "Path to entries JSON file"
-  method_option :assets, type: :string, desc: "Path to assets JSON file"
-  method_option :assets_folder, type: :string, desc: "Path to asset folder"
+  method_option :contentful_content, type: :string, required: true, desc: "Path to contentful content JSON file"
+  method_option :assets_folder, type: :string, required: true, desc: "Path to asset folder"
   def import
-    if options[:entries]
-      unless File.exist?(options[:entries])
-        puts "Error: Entries file '#{options[:entries]}' not found."
-        exit(1)
-      end
-
-      begin
-        $entries_data = JSON.parse(File.read(options[:entries]))
-        $entries_data = $entries_data.deep_transform_keys { |key| key.to_s.underscore }.fetch("entries")
-
-        EntriesImporter.new.run($entries_data)
-      rescue JSON::ParserError => e
-        puts "Error parsing entries JSON: #{e.message}"
-        exit(1)
-      end
+    unless File.exist?(options[:contentful_content])
+      puts "Error: Contentful content file '#{options[:contentful_content]}' not found."
+      exit(1)
     end
 
-    if options[:assets]
-      unless File.exist?(options[:assets])
-        puts "Error: Assets file '#{options[:assets]}' not found."
-        exit(1)
-      end
+    unless Dir.exist?(options[:assets_folder])
+      puts "Error: Assets folder '#{options[:assets_folder]}' not found."
+      exit(1)
+    end
 
-      unless options[:assets_folder]
-        puts "Error: --assets_folder must be specified when using --assets."
-        exit(1)
-      end
+    begin
+      contentful_data = JSON.parse(File.read(options[:contentful_content])).deep_transform_keys { |key| key.to_s.underscore }
+      $entries_data = contentful_data.fetch("entries")
+      $assets_data = contentful_data.fetch("assets")
+      $assets_folder = options[:assets_folder]
 
-      begin
-        $assets_data = JSON.parse(File.read(options[:assets]))
-        $assets_data = $assets_data.deep_transform_keys { |key| key.to_s.underscore }
-
-        AssetsImporter.new.run($assets_data.fetch("assets"), options[:assets_folder])
-      rescue JSON::ParserError => e
-        puts "Error parsing assets JSON: #{e.message}"
-        exit(1)
-      end
+      EntriesImporter.new.run($entries_data)
+    rescue JSON::ParserError => e
+      puts "Error parsing contentful content JSON: #{e.message}"
+      exit(1)
     end
   end
 end

@@ -2,7 +2,7 @@ require "active_model"
 
 module Contentful
   class Category
-    include StrapiConnected
+    include StrapiDocumentConnected
     include ActiveModel::Model
 
     attr_accessor :title

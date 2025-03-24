@@ -1,5 +1,5 @@
 module Contentful
-  class Link
+  class EntryLink
     attr_accessor :id
 
     def resolve_link

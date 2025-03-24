@@ -1,11 +1,9 @@
-require_relative 'link_representer'
-
 module Contentful
   class AssetRepresenter < Representable::Decorator
     include Representable::JSON
 
     nested :sys do
-      property :contenful_id, as: :id
+      property :contentful_id, as: :id
       nested :space do
         nested :sys do
           property :space_id, as: :id
@@ -25,7 +23,6 @@ module Contentful
         nested :file do
           nested :de_de do
             property :url
-            property :file_name
           end
         end
       end

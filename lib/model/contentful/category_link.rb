@@ -1,7 +1,7 @@
-require_relative 'link'
+require_relative 'entry_link'
 
 module Contentful
-  class CategoryLink < Link
+  class CategoryLink < EntryLink
     attr_accessor :id
 
     def representer_class
