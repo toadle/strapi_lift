@@ -19,6 +19,8 @@ module Contentful
           property property_name, as: :de_de
         end
       end
+
+      property :image_link, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :image
     end
 
     nested :sys do

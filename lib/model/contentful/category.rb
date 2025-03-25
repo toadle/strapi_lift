@@ -19,9 +19,7 @@ module Contentful
     attr_accessor :contentful_id
     attr_accessor :strapi_id
 
-    def save!
-      save_to_strapi! unless present_in_strapi?
-    end
+    link_asset  source: :image_link, target: :image
 
     def strapi_api_path
       "/api/categories"

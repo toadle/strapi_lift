@@ -10,6 +10,67 @@ module StrapiDocumentConnected
     strapi_representer_class
   ]
 
+  class_methods do
+    def object_links
+      @object_links ||= []
+    end
+
+    def asset_links
+      @asset_links ||= []
+    end
+
+    def link_object(source:, target:)
+      attr_accessor source
+      object_links << { source: source, target: target }
+    end
+
+    def link_asset(source:, target:)
+      attr_accessor source
+      asset_links << { source: source, target: target }
+    end
+  end
+
+  def save!(follow_object_links: true)
+    if follow_object_links
+      self.class.object_links.each do |link|
+        link_object = public_send(link[:source])
+        raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
+        resolved = link_object.resolve_link
+        resolved.save!(follow_object_links: false)
+        instance_variable_set("@#{link[:target]}", resolved)
+      end
+    end
+
+    self.class.asset_links.each do |link|
+      link_asset = public_send(link[:source])
+      raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
+      resolved = link_asset.resolve_link
+      if resolved
+        resolved.save!
+        instance_variable_set("@#{link[:target]}_id", resolved.strapi_file_id)
+      end
+    end
+
+    save_to_strapi! unless present_in_strapi?
+    update_connections!
+  end
+
+  def connections_data
+    data = {}
+
+    self.class.object_links.each do |link|
+      obj = instance_variable_get("@#{link[:target]}")
+      data[link[:target].to_s.camelize(:lower)] = { "connect" => [obj.strapi_id] }
+    end
+
+    self.class.asset_links.each do |link|
+      asset_id = instance_variable_get("@#{link[:target]}_id")
+      data[link[:target].to_s.camelize(:lower)] = asset_id
+    end
+
+    data
+  end
+
   def ensure_strapi_methods!
     missing = REQUIRED_INSTANCE_METHODS.reject { |m| respond_to?(m) }
     unless missing.empty?
