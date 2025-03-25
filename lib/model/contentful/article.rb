@@ -4,7 +4,6 @@ module Contentful
     attr_accessor :contentful_id
     attr_accessor :title
     attr_accessor :slug
-    attr_accessor :content
     attr_accessor :sponsored_article
     attr_accessor :affiliate_notice_hidden
     
@@ -23,6 +22,7 @@ module Contentful
     attr_accessor :strapi_id
     attr_accessor :teaser_image_id
 
+    rich_text source: :content, target: :content
     link_object source: :category_link, target: :category
     link_asset  source: :teaser_image_link, target: :teaser_image
   

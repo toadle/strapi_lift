@@ -19,6 +19,25 @@ module StrapiDocumentConnected
       @asset_links ||= []
     end
 
+    def rich_text_fields
+      @rich_text_fields ||= []
+    end
+
+    def rich_text(source:, target:)
+      attr_accessor source
+
+      define_method "#{source}_asset_urls" do
+        return [] unless send(source)
+
+        content = send(source)
+        content.scan(/\(((?:https?:)?\/\/images\.ctfassets\.net\/[^)\s]+)\)/i)
+          .map(&:first)
+          .uniq
+      end
+
+      rich_text_fields << { source: source, target: target }
+    end
+
     def link_object(source:, target:)
       attr_accessor source
       object_links << { source: source, target: target }
@@ -39,6 +58,22 @@ module StrapiDocumentConnected
         resolved.save!(follow_object_links: false)
         instance_variable_set("@#{link[:target]}", resolved)
       end
+    end
+
+    self.class.rich_text_fields.each do |rich_text|
+      content = public_send(rich_text[:source])
+      next unless content
+
+      asset_urls = public_send("#{rich_text[:source]}_asset_urls")
+      asset_urls.each do |asset_url|
+        asset_link = Contentful::AssetLink.from_url(asset_url)
+        asset = asset_link.resolve_link
+        asset.save!
+
+        content.gsub!(asset_url, asset.strapi_file_url)
+      end
+
+      public_send("#{rich_text[:source]}=", content)
     end
 
     self.class.asset_links.each do |link|

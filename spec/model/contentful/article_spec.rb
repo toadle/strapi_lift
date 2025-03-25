@@ -5,42 +5,14 @@ RSpec.describe  Contentful::Article do
   let(:article) { Contentful::Article.new }
   let(:representer) { Contentful::ArticleRepresenter.new(article) }
 
-  describe "#connections_data" do
-    let(:article) { Contentful::Article.new }
-    let(:contentful_categories) do
-      [
-        Contentful::Category.new(
-          contentful_id: "abcdef",
-          strapi_id: "123456"
-        ),
-        Contentful::Category.new(
-          contentful_id: "ghijkl",
-          strapi_id: "789012"
-        )
-      ]
-    end
-
+  describe "#content_asset_urls" do
     before do
-      article.category_link = Contentful::CategoryLink.new
-      article.category_link.id = "abcdef"
+      representer.from_hash(article_data)
     end
 
-    xit "return the right data" do
-      expect(article.connections_data).to eq(
-        {
-          "category" => {
-            "connect" => ["123456"]
-          }
-        }
-      )
-    end
-
-    xit "raises and error when categories can not be found" do
-      article.category_link.id = "non_existent_id"
-
-      expect {
-        article.connections_data
-      }.to raise_error(StandardError, "Category with ID non_existent_id not found to establish connection.")
+    it "returns the asset url for the article" do
+      # expect(article.content_asset_urls.count).to eq(7)
+      expect(article.content_asset_urls.first).to eq("//images.ctfassets.net/01e3d4iatuxi/527qCnDNIfQDccTfKViZ5V/2ba797027542f6ad6fff009ff40c06d3/Brautfrisuren_mit_Fascinator_-_myrakim_1.jpg")
     end
   end
 end

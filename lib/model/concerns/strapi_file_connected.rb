@@ -21,7 +21,8 @@ module StrapiFileConnected
     ensure_strapi_methods!
     file_path = discover_file_path
     upload_response = strapi_connection.upload_file(file_path)
-    self.strapi_file_id = upload_response.first["id"]
+    self.strapi_file_id = upload_response.dig("id")
+    self.strapi_file_url = upload_response.dig("url")
 
     if self.strapi_file_id
       metadata = {
@@ -43,6 +44,7 @@ module StrapiFileConnected
     return false unless strapi_file_info.present?
 
     self.strapi_file_id = strapi_file_info.dig("id")
+    self.strapi_file_url = strapi_file_info.dig("url")
     puts "Asset #{title} already exists in Strapi with ID #{self.strapi_file_id}."
     return true
   end
