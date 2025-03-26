@@ -6,7 +6,6 @@ module StrapiDocumentConnected
     title
     strapi_id
     strapi_id=
-    strapi_api_path
     strapi_representer_class
   ]
 
@@ -21,6 +20,14 @@ module StrapiDocumentConnected
 
     def rich_text_fields
       @rich_text_fields ||= []
+    end
+
+    def strapi_api_path
+      @strapi_api_path
+    end
+
+    def api_path(path)
+      @strapi_api_path = path
     end
 
     def rich_text(source:, target:)
@@ -47,16 +54,48 @@ module StrapiDocumentConnected
       attr_accessor source
       asset_links << { source: source, target: target }
     end
+
+    def link_objects(source:, target:)
+      attr_accessor source
+      object_links << { source: source, target: target, multiple: true }
+    end
+
+    def link_assets(source:, target:)
+      attr_accessor source
+      asset_links << { source: source, target: target, multiple: true }
+    end
+
+    def reset_strapi!
+      connection = Strapi::Connection.new
+      response = connection.get(strapi_api_path)
+      documents = response.body.dig("data") || []
+
+      documents.each do |document|
+        connection.delete("#{strapi_api_path}/#{document['documentId']}")
+        puts "#{name} with ID #{document['documentId']} deleted successfully."
+      end
+    end
   end
 
   def save!(follow_object_links: true)
     if follow_object_links
       self.class.object_links.each do |link|
-        link_object = public_send(link[:source])
-        raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
-        resolved = link_object.resolve_link
-        resolved.save!(follow_object_links: false)
-        instance_variable_set("@#{link[:target]}", resolved)
+        if link[:multiple]
+          link_objects = public_send(link[:source]) || []
+          resolved_objects = link_objects.map do |link_object|
+            raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
+            resolved = link_object.resolve_link
+            resolved.save!(follow_object_links: false)
+            resolved
+          end
+          instance_variable_set("@#{link[:target]}", resolved_objects)
+        else
+          link_object = public_send(link[:source])
+          raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
+          resolved = link_object.resolve_link
+          resolved.save!(follow_object_links: false)
+          instance_variable_set("@#{link[:target]}", resolved)
+        end
       end
     end
 
@@ -77,12 +116,25 @@ module StrapiDocumentConnected
     end
 
     self.class.asset_links.each do |link|
-      link_asset = public_send(link[:source])
-      raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
-      resolved = link_asset.resolve_link
-      if resolved
-        resolved.save!
-        instance_variable_set("@#{link[:target]}_id", resolved.strapi_file_id)
+      if link[:multiple]
+        link_assets = public_send(link[:source]) || []
+        resolved_assets = link_assets.map do |link_asset|
+          raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
+          resolved = link_asset.resolve_link
+          if resolved
+            resolved.save!
+            resolved.strapi_file_id
+          end
+        end.compact
+        instance_variable_set("@#{link[:target]}_ids", resolved_assets)
+      else
+        link_asset = public_send(link[:source])
+        raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
+        resolved = link_asset.resolve_link
+        if resolved
+          resolved.save!
+          instance_variable_set("@#{link[:target]}_id", resolved.strapi_file_id)
+        end
       end
     end
 
@@ -94,13 +146,31 @@ module StrapiDocumentConnected
     data = {}
 
     self.class.object_links.each do |link|
-      obj = instance_variable_get("@#{link[:target]}")
-      data[link[:target].to_s.camelize(:lower)] = { "connect" => [obj.strapi_id] }
+      if link[:multiple]
+        objs = instance_variable_get("@#{link[:target]}") || []
+        next if objs.empty?
+
+        data[link[:target].to_s.camelize(:lower)] = { "connect" => objs.map(&:strapi_id) }
+      else
+        obj = instance_variable_get("@#{link[:target]}")
+        next unless obj
+
+        data[link[:target].to_s.camelize(:lower)] = { "connect" => [obj.strapi_id] }
+      end
     end
 
     self.class.asset_links.each do |link|
-      asset_id = instance_variable_get("@#{link[:target]}_id")
-      data[link[:target].to_s.camelize(:lower)] = asset_id
+      if link[:multiple]
+        asset_ids = instance_variable_get("@#{link[:target]}_ids") || []
+        next if asset_ids.empty?
+
+        data[link[:target].to_s.camelize(:lower)] = asset_ids
+      else
+        asset_id = instance_variable_get("@#{link[:target]}_id")
+        next unless asset_id
+
+        data[link[:target].to_s.camelize(:lower)] = asset_id
+      end
     end
 
     data
@@ -117,19 +187,18 @@ module StrapiDocumentConnected
     ensure_strapi_methods!
     return true if self.strapi_id
 
-    response = strapi_connection.get(strapi_api_path, {
+    response = strapi_connection.get(self.class.strapi_api_path, {
       filters: {
         contentfulId: { "$eq": contentful_id }
       }
     })
 
-    if response.success?
-      strapi_entry = response.body.dig("data", 0)
-      if strapi_entry
-        self.strapi_id = strapi_entry["documentId"]
-        puts "#{strapi_entry_type_name} #{title} already exists in Strapi with ID #{strapi_id}."
-        return true
-      end
+  
+    strapi_entry = response.body.dig("data", 0)
+    if strapi_entry
+      self.strapi_id = strapi_entry["documentId"]
+      puts "#{strapi_entry_type_name} #{title} already exists in Strapi with ID #{strapi_id}."
+      return true
     end
 
     false
@@ -140,27 +209,17 @@ module StrapiDocumentConnected
     representer = strapi_representer_class.new(self)
     data = representer.to_hash.transform_keys { |key| key.to_s.camelize(:lower) }
 
-    response = strapi_connection.post(strapi_api_path, { data: data })
+    response = strapi_connection.post(self.class.strapi_api_path, { data: data })
 
-    if response.success?
-      self.strapi_id = response.body.dig("data", "documentId")
-      puts "#{strapi_entry_type_name} #{title} imported successfully as #{strapi_id}."
-    end
-  rescue StandardError => e
-    puts "Failed to import #{strapi_entry_type_name} #{title}: #{e.message}"
+    self.strapi_id = response.body.dig("data", "documentId")
+    puts "#{strapi_entry_type_name} #{title} imported successfully as #{strapi_id}."
   end
 
   def update_connections!
     return unless respond_to?(:connections_data) && connections_data.present?
 
-    begin
-      response = strapi_connection.put(strapi_api_path + "/#{self.strapi_id}", {data: connections_data})
-      if response.success?
-        puts "Connections for #{strapi_entry_type_name} #{title} updated successfully."
-      end
-    rescue StandardError => e
-      puts "Failed to update connections for #{strapi_entry_type_name} #{title}: #{e.message}"
-    end
+    strapi_connection.put(self.class.strapi_api_path + "/#{self.strapi_id}", {data: connections_data})
+    puts "Connections for #{strapi_entry_type_name} #{title} updated successfully."
   end
 
   private

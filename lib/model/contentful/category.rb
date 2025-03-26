@@ -21,9 +21,7 @@ module Contentful
 
     link_asset  source: :image_link, target: :image
 
-    def strapi_api_path
-      "/api/categories"
-    end
+    api_path "/api/categories"
   
     def strapi_representer_class
       Strapi::CategoryRepresenter

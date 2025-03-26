@@ -20,7 +20,10 @@ module Contentful
         end
       end
 
-      property :image_link, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :image
+      nested :image do
+        property :image_link, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :de_de
+      end
+
     end
 
     nested :sys do

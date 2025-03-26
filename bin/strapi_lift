@@ -38,6 +38,13 @@ class Cli < Thor
       exit(1)
     end
   end
+
+  desc "reset", "Deletes all content from strapi"
+  def reset
+    Contentful::Article.reset_strapi!
+    Contentful::Category.reset_strapi!
+    Contentful::Asset.reset_strapi!
+  end
 end
 
 Cli.start(ARGV)

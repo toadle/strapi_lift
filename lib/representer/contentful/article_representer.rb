@@ -25,8 +25,15 @@ module Contentful
         end
       end
 
-      property :category_link, decorator: Contentful::EntryLinkRepresenter, class: Contentful::CategoryLink, as: :category
-      property :teaser_image_link, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :teaser_image
+      nested :category do 
+        property :category_link, decorator: Contentful::EntryLinkRepresenter, class: Contentful::CategoryLink, as: :de_de
+      end
+      nested :teaser_image do
+        property :teaser_image_link, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :de_de
+      end
+      nested :related_articles do
+        collection :related_article_links, decorator: Contentful::EntryLinkRepresenter, class: Contentful::ArticleLink, as: :de_de
+      end
     end
 
     nested :sys do

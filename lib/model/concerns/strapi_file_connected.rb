@@ -10,6 +10,19 @@ module StrapiFileConnected
     file_name
   ]
 
+  class_methods do
+    def reset_strapi!
+      connection = Strapi::Connection.new
+      response = connection.get("/api/upload/files")
+      files = response.body || []
+
+      files.each do |file|
+        connection.delete("/api/upload/files/#{file['id']}")
+        puts "File #{file["caption"]} with ID #{file['id']} deleted successfully."
+      end
+    end
+  end
+
   def ensure_strapi_methods!
     missing = REQUIRED_INSTANCE_METHODS.reject { |m| respond_to?(m) }
     unless missing.empty?
@@ -21,8 +34,9 @@ module StrapiFileConnected
     ensure_strapi_methods!
     file_path = discover_file_path
     upload_response = strapi_connection.upload_file(file_path)
-    self.strapi_file_id = upload_response.dig("id")
-    self.strapi_file_url = upload_response.dig("url")
+
+    self.strapi_file_id = upload_response.first.dig("id")
+    self.strapi_file_url = upload_response.first.dig("url")
 
     if self.strapi_file_id
       metadata = {

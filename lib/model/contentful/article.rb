@@ -17,7 +17,6 @@ module Contentful
     attr_accessor :image_gallery
     attr_accessor :authors
     attr_accessor :sources
-    attr_accessor :related_articles
     attr_accessor :breadcrumbs
     attr_accessor :strapi_id
     attr_accessor :teaser_image_id
@@ -25,6 +24,9 @@ module Contentful
     rich_text source: :content, target: :content
     link_object source: :category_link, target: :category
     link_asset  source: :teaser_image_link, target: :teaser_image
+    link_objects source: :related_article_links, target: :related_articles
+
+    api_path "/api/articles"
   
     def category_link
       @category_link
@@ -32,10 +34,6 @@ module Contentful
   
     def teaser_image_link
       @teaser_image_link
-    end
-
-    def strapi_api_path
-      "/api/articles"
     end
   
     def strapi_representer_class
