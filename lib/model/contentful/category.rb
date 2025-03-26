@@ -16,8 +16,6 @@ module Contentful
     attr_accessor :introduction_headline
     attr_accessor :introduction
     attr_accessor :vg_wort_pixel_url
-    attr_accessor :contentful_id
-    attr_accessor :strapi_id
 
     link_asset  source: :image_link, target: :image
 

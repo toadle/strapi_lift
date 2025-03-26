@@ -1,12 +1,10 @@
 module Contentful
   class Article
     include StrapiDocumentConnected
-    attr_accessor :contentful_id
     attr_accessor :title
     attr_accessor :slug
     attr_accessor :sponsored_article
     attr_accessor :affiliate_notice_hidden
-    
     attr_accessor :seo_text
     attr_accessor :meta_keywords
     attr_accessor :meta_description
@@ -18,13 +16,13 @@ module Contentful
     attr_accessor :authors
     attr_accessor :sources
     attr_accessor :breadcrumbs
-    attr_accessor :strapi_id
     attr_accessor :teaser_image_id
 
     rich_text source: :content, target: :content
     link_object source: :category_link, target: :category
     link_asset  source: :teaser_image_link, target: :teaser_image
     link_objects source: :related_article_links, target: :related_articles
+    link_objects source: :author_links, target: :authors
 
     api_path "/api/articles"
   

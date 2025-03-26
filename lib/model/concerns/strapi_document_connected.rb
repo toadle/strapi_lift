@@ -2,12 +2,14 @@ module StrapiDocumentConnected
   extend ActiveSupport::Concern
 
   REQUIRED_INSTANCE_METHODS = %i[
-    contentful_id
     title
-    strapi_id
-    strapi_id=
     strapi_representer_class
   ]
+
+  included do
+    attr_accessor :strapi_id
+    attr_accessor :contentful_id
+  end
 
   class_methods do
     def object_links

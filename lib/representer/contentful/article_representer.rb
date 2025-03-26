@@ -34,6 +34,9 @@ module Contentful
       nested :related_articles do
         collection :related_article_links, decorator: Contentful::EntryLinkRepresenter, class: Contentful::ArticleLink, as: :de_de
       end
+      nested :authors do
+        collection :author_links, decorator: Contentful::EntryLinkRepresenter, class: Contentful::AuthorLink, as: :de_de
+      end
     end
 
     nested :sys do
