@@ -1,7 +1,7 @@
-module Strapi
-  class ArticleRepresenter < Representable::Decorator
-    include Representable::JSON
+require_relative 'base_representer'
 
+module Strapi
+  class ArticleRepresenter < BaseRepresenter
     property :title
     property :slug
     property :content
@@ -14,6 +14,5 @@ module Strapi
     property :display_toc
     property :vg_wort_pixel_url
     property :sources
-    property :contentful_id
   end
 end

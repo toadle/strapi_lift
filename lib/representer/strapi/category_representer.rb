@@ -1,8 +1,7 @@
-module Strapi
-  class CategoryRepresenter < Representable::Decorator
-    include Representable::JSON
+require_relative 'base_representer'
 
-    property :contentful_id
+module Strapi
+  class CategoryRepresenter < BaseRepresenter
     property :title
     property :slug
     property :seo_text

@@ -1,7 +1,7 @@
-module Strapi
-  class AuthorRepresenter < Representable::Decorator
-    include Representable::JSON
+require_relative 'base_representer'
 
+module Strapi
+  class AuthorRepresenter < BaseRepresenter
     property :name
   end
 end

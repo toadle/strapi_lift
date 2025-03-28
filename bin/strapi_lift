@@ -43,6 +43,7 @@ class Cli < Thor
   def reset
     Contentful::Article.reset_strapi!
     Contentful::Category.reset_strapi!
+    Contentful::ImageGallery.reset_strapi!
     Contentful::Author.reset_strapi!
     Contentful::Asset.reset_strapi!
   end

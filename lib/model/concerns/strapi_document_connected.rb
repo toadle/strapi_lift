@@ -142,6 +142,9 @@ module StrapiDocumentConnected
 
     save_to_strapi! unless present_in_strapi?
     update_connections!
+  rescue Faraday::BadRequestError => e
+    puts JSON.parse(e.response.fetch(:body)).dig("error", "message")
+    raise e
   end
 
   def connections_data
@@ -194,7 +197,6 @@ module StrapiDocumentConnected
         contentfulId: { "$eq": contentful_id }
       }
     })
-
   
     strapi_entry = response.body.dig("data", 0)
     if strapi_entry
@@ -204,6 +206,9 @@ module StrapiDocumentConnected
     end
 
     false
+  rescue Faraday::BadRequestError => e
+    puts JSON.parse(e.response.fetch(:body)).dig("error", "message")
+    raise e
   end
 
   def save_to_strapi!

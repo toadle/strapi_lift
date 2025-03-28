@@ -20,19 +20,12 @@ module Contentful
 
     rich_text source: :content, target: :content
     link_object source: :category_link, target: :category
+    link_object source: :image_gallery_link, target: :image_gallery
     link_asset  source: :teaser_image_link, target: :teaser_image
     link_objects source: :related_article_links, target: :related_articles
     link_objects source: :author_links, target: :authors
 
     api_path "/api/articles"
-  
-    def category_link
-      @category_link
-    end
-  
-    def teaser_image_link
-      @teaser_image_link
-    end
   
     def strapi_representer_class
       Strapi::ArticleRepresenter

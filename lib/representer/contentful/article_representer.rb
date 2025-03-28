@@ -25,6 +25,9 @@ module Contentful
         end
       end
 
+      nested :image_gallery do
+        property :image_gallery_link, decorator: Contentful::EntryLinkRepresenter, class: Contentful::ImageGalleryLink, as: :de_de
+      end
       nested :category do 
         property :category_link, decorator: Contentful::EntryLinkRepresenter, class: Contentful::CategoryLink, as: :de_de
       end
