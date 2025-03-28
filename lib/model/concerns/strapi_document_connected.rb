@@ -39,7 +39,7 @@ module StrapiDocumentConnected
         return [] unless send(source)
 
         content = send(source)
-        content.scan(/\(((?:https?:)?\/\/images\.ctfassets\.net\/[^)\s]+)\)/i)
+        content.scan(/\(((?:https?:)?\/\/images\.(?:ctfassets\.net|contentful\.com)\/[^)\s]+)\)/i)
           .map(&:first)
           .uniq
       end

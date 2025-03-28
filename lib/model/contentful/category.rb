@@ -9,15 +9,17 @@ module Contentful
     attr_accessor :slug
     attr_accessor :image
     attr_accessor :seo_text
+    attr_accessor :cat_intro_head
+    attr_accessor :cat_introduction
+    attr_accessor :seo_text
+    attr_accessor :top
     attr_accessor :meta_title
     attr_accessor :meta_keywords
     attr_accessor :meta_description
     attr_accessor :meta_robots
-    attr_accessor :introduction_headline
-    attr_accessor :introduction
-    attr_accessor :vg_wort_pixel_url
 
     link_asset  source: :image_link, target: :image
+    link_objects source: :subcategory_links, target: :subcategories
 
     api_path "/api/categories"
   
