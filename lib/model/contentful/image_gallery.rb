@@ -10,6 +10,7 @@ module Contentful
     attr_accessor :service_provider
 
     link_assets  source: :image_links, target: :images
+    link_objects source: :tag_links, target: :tags, always_resolve: true
 
     api_path "/api/image-galleries"
   

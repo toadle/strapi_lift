@@ -16,6 +16,10 @@ module Contentful
         nested :images do
           collection :image_links, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :de_de
         end
+
+        nested :tags do
+          collection :tag_links, decorator: Contentful::EntryLinkRepresenter, class: Contentful::ImageGalleryTagLink, as: :de_de
+        end
       end
     end
 

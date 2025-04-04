@@ -47,9 +47,9 @@ module StrapiDocumentConnected
       rich_text_fields << { source: source, target: target }
     end
 
-    def link_object(source:, target:)
+    def link_object(source:, target:, always_resolve: false)
       attr_accessor source
-      object_links << { source: source, target: target }
+      object_links << { source: source, target: target, always_resolve: always_resolve }
     end
 
     def link_asset(source:, target:)
@@ -57,9 +57,9 @@ module StrapiDocumentConnected
       asset_links << { source: source, target: target }
     end
 
-    def link_objects(source:, target:)
+    def link_objects(source:, target:, always_resolve: false)
       attr_accessor source
-      object_links << { source: source, target: target, multiple: true }
+      object_links << { source: source, target: target, multiple: true, always_resolve: always_resolve }
     end
 
     def link_assets(source:, target:)
@@ -80,46 +80,39 @@ module StrapiDocumentConnected
   end
 
   def save!(follow_object_links: true)
-    if follow_object_links
-      self.class.object_links.each do |link|
-        if link[:multiple]
-          link_objects = public_send(link[:source]) || []
-          resolved_objects = link_objects.map do |link_object|
-            raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
-            resolved = link_object.resolve_link
-            resolved.save!(follow_object_links: false)
-            resolved
-          end
-          instance_variable_set("@#{link[:target]}", resolved_objects)
-        else
-          link_object = public_send(link[:source])
-          raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
-          resolved = link_object.resolve_link
-          resolved.save!(follow_object_links: false)
-          instance_variable_set("@#{link[:target]}", resolved)
+    self.class.object_links.each do |link|
+      next unless follow_object_links || (link[:always_resolve] && !present_in_strapi?)
+
+      link_objects = Array(public_send(link[:source]))
+      resolved_objects = link_objects.map do |link_object|
+        raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
+        resolved = link_object.resolve_link
+        resolved.save!(follow_object_links: false)
+        resolved
+      end
+
+      instance_variable_set("@#{link[:target]}", link[:multiple] ? resolved_objects : resolved_objects.first)
+    end
+
+    unless present_in_strapi?
+      self.class.rich_text_fields.each do |rich_text|
+        content = public_send(rich_text[:source])
+        next unless content
+
+        asset_urls = public_send("#{rich_text[:source]}_asset_urls")
+        asset_urls.each do |asset_url|
+          asset_link = Contentful::AssetLink.from_url(asset_url)
+          asset = asset_link.resolve_link
+          asset.save!
+
+          content.gsub!(asset_url, asset.strapi_file_url)
         end
-      end
-    end
 
-    self.class.rich_text_fields.each do |rich_text|
-      content = public_send(rich_text[:source])
-      next unless content
-
-      asset_urls = public_send("#{rich_text[:source]}_asset_urls")
-      asset_urls.each do |asset_url|
-        asset_link = Contentful::AssetLink.from_url(asset_url)
-        asset = asset_link.resolve_link
-        asset.save!
-
-        content.gsub!(asset_url, asset.strapi_file_url)
+        public_send("#{rich_text[:source]}=", content)
       end
 
-      public_send("#{rich_text[:source]}=", content)
-    end
-
-    self.class.asset_links.each do |link|
-      if link[:multiple]
-        link_assets = public_send(link[:source]) || []
+      self.class.asset_links.each do |link|
+        link_assets = Array(public_send(link[:source]))
         resolved_assets = link_assets.map do |link_asset|
           raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
           resolved = link_asset.resolve_link
@@ -128,19 +121,13 @@ module StrapiDocumentConnected
             resolved.strapi_file_id
           end
         end.compact
-        instance_variable_set("@#{link[:target]}_ids", resolved_assets)
-      else
-        link_asset = public_send(link[:source])
-        raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
-        resolved = link_asset.resolve_link
-        if resolved
-          resolved.save!
-          instance_variable_set("@#{link[:target]}_id", resolved.strapi_file_id)
-        end
+
+        instance_variable_set("@#{link[:target]}#{link[:multiple] ? '_ids' : '_id'}", link[:multiple] ? resolved_assets : resolved_assets.first)
       end
+
+      save_to_strapi!
     end
 
-    save_to_strapi! unless present_in_strapi?
     update_connections!
   rescue Faraday::BadRequestError => e
     puts JSON.parse(e.response.fetch(:body)).dig("error", "message")
