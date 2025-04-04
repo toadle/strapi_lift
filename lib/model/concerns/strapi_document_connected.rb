@@ -32,6 +32,14 @@ module StrapiDocumentConnected
       @strapi_api_path = path
     end
 
+    def single_content_type!
+      @single_content_type = true
+    end
+
+    def single_content_type?
+      @single_content_type
+    end
+
     def rich_text(source:, target:)
       attr_accessor source
 
@@ -69,12 +77,19 @@ module StrapiDocumentConnected
 
     def reset_strapi!
       connection = Strapi::Connection.new
-      response = connection.get(strapi_api_path)
-      documents = response.body.dig("data") || []
-
-      documents.each do |document|
-        connection.delete("#{strapi_api_path}/#{document['documentId']}")
-        puts "#{name} with ID #{document['documentId']} deleted successfully."
+      if single_content_type?
+        begin
+          connection.get(strapi_api_path).body.dig("data").present?
+          connection.delete(strapi_api_path)
+          puts "#{name} deleted successfully."
+        rescue Faraday::ResourceNotFound
+          # pass
+        end
+      else
+        connection.get(strapi_api_path).body.dig("data").each do |document|
+          connection.delete("#{strapi_api_path}/#{document['documentId']}")
+          puts "#{name} with ID #{document['documentId']} deleted successfully."
+        end
       end
     end
   end
@@ -179,6 +194,14 @@ module StrapiDocumentConnected
     ensure_strapi_methods!
     return true if self.strapi_id
 
+    if self.class.single_content_type?
+      begin
+        return strapi_connection.get(self.class.strapi_api_path).body.dig("data").present?
+      rescue Faraday::ResourceNotFound
+        return false
+      end
+    end
+
     response = strapi_connection.get(self.class.strapi_api_path, {
       filters: {
         contentfulId: { "$eq": contentful_id }
@@ -203,7 +226,12 @@ module StrapiDocumentConnected
     representer = strapi_representer_class.new(self)
     data = representer.to_hash.transform_keys { |key| key.to_s.camelize(:lower) }
 
-    response = strapi_connection.post(self.class.strapi_api_path, { data: data })
+    if self.class.single_content_type?
+      data.delete("contentfulId")
+      response = strapi_connection.put(self.class.strapi_api_path, { data: data }) if self.class.single_content_type?
+    else
+      response = strapi_connection.post(self.class.strapi_api_path, { data: data }) unless self.class.single_content_type?
+    end
 
     self.strapi_id = response.body.dig("data", "documentId")
     puts "#{strapi_entry_type_name} #{title} imported successfully as #{strapi_id}."
@@ -212,7 +240,8 @@ module StrapiDocumentConnected
   def update_connections!
     return unless respond_to?(:connections_data) && connections_data.present?
 
-    strapi_connection.put(self.class.strapi_api_path + "/#{self.strapi_id}", {data: connections_data})
+    strapi_connection.put(self.class.strapi_api_path + "/#{self.strapi_id}", {data: connections_data}) unless self.class.single_content_type?
+    strapi_connection.put(self.class.strapi_api_path, {data: connections_data}) if self.class.single_content_type?
     puts "Connections for #{strapi_entry_type_name} #{title} updated successfully."
   end
 

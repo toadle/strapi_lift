@@ -1,0 +1,237 @@
+{
+  "metadata": {
+    "tags": [
+    ],
+    "concepts": [
+    ]
+  },
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "01e3d4iatuxi"
+      }
+    },
+    "id": "5vXkbOlyUMeS66A8ksqEW4",
+    "type": "Entry",
+    "createdAt": "2015-09-23T15:19:51.785Z",
+    "updatedAt": "2025-01-14T13:26:13.245Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "publishedVersion": 3644,
+    "publishedAt": "2025-01-14T13:26:13.245Z",
+    "firstPublishedAt": "2015-10-13T12:31:42.244Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "3uRyZjPepZB5ZKOihyqgne"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "03bxBB81XfSfVm6K3cl9Op"
+      }
+    },
+    "publishedCounter": 118,
+    "version": 3645,
+    "publishedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "03bxBB81XfSfVm6K3cl9Op"
+      }
+    },
+    "fieldStatus": {
+      "*": {
+        "de-de": "published"
+      }
+    },
+    "automationTags": [
+    ],
+    "contentType": {
+      "sys": {
+        "type": "Link",
+        "linkType": "ContentType",
+        "id": "42rOugxTn2akMskSggwqKE"
+      }
+    },
+    "urn": "crn:contentful:::content:spaces/01e3d4iatuxi/environments/master/entries/5vXkbOlyUMeS66A8ksqEW4"
+  },
+  "fields": {
+    "title": {
+      "de-de": "Erste Homepage"
+    },
+    "mainMenu": {
+      "de-de": [
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5Id1e0lHCEQcoMyAYgWWee"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5tTfRLdWCW4eY8y6wSkUqU"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "2HZ8GGh6Osic6YU0oqkw8E"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "4tqMSUE63uCOYWu4IcKi6K"
+          }
+        }
+      ]
+    },
+    "topTeaser": {
+      "de-de": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "23DrAsOkXW4EcYCqaooyC4"
+        }
+      }
+    },
+    "articles": {
+      "de-de": [
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "3pcvOdo2liWeO00mIMIyCE"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "2dXFsXq3xPaCegaiOZIyF0"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "44raZUjv9CMQeowwsGMAqc"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "6YDbtaXruE4cssC6YmCQG8"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "4Yutett2ukcg4CqYgeeSgm"
+          }
+        }
+      ]
+    },
+    "categories": {
+      "de-de": [
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5GyHy723lKyScu4oq6A0QQ"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "57bgRTLCo8kEyWEecWEW0w"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "yxCerUnF3UygCoeOeuEwc"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "U9KwdZeekMc8Uaw8cI8og"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "6Oa48zkkIEqS6mikMiekeQ"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "1C3nEEJYYk6IkW8sgYSwMO"
+          }
+        }
+      ]
+    },
+    "teasers": {
+      "de-de": [
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5wjfHF0spi0OKQgEG8icUS"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "3Ht5dVcYJW6yGMOIAAgOQa"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "h3nAOrRv0WcgoGmW8OQQE"
+          }
+        }
+      ]
+    },
+    "seoText": {
+      "de-de": "## Hochzeit & Heirat mit Hochzeitsplaza\n\nHerzlich willkommen bei Hochzeitsplaza! Deutschlands wohl größtem und umfangreichstem Online-Hochzeitsportal.\n\n### Heiraten leicht gemacht\n\nPlant Ihr schon Eure Traumhochzeit? Wir unterstützen Euch übrigens gerne bei der Hochzeitsplanung! Und zwar mit Tipps, Trends, Empfehlungen, redaktionellen Inhalten und vielen Bildern rund um das Thema __Heiraten__. Dabei beginnen wir schon beim Heiratsantrag und der Verlobung. Hierfür bieten wir mit unseren Tipps und Ideen eine kleine Hilfe.\n\nDu brauchst trotzdem noch einen Rat für die Hochzeitsdekoration? Oder genauso für die Hochzeitstorte, Dein Brautkleid oder die Flitterwochen nach der Feier? Bei __Hochzeitsplaza__ wirst Du hierfür fündig! Es erwarten Dich außerdem nützliche Informationen für die standesamtliche Trauung oder die kirchliche Trauung. Ebenso bieten wir Ideen für die Gestaltung Deiner Einladungskarten und viele andere wichtige Themen.\n\n### Real Weddings: Ideen für Hochzeiten\n\nFilter' in unseren zahlreichen Real Weddings nach Farben, Saison und Stil Deiner Traumhochzeit. Oder lass' Dich hierzu einfach von uns inspirieren! In einer der mehr als hundert Artikelgalerien findest auch Du Dein Traumkleid. Aber ebenso zum Thema Brautstrauß bieten wir in unserem Magazin alles Wissenswerte. Von den __Bedeutungen der Blumen__ bis hin zu den aktuellen Brautstraußtrends. Zusätzlich werden auch wichtige Details der kirchlichen Trauung, wie beispielsweise das [Kirchenheft zur Hochzeit](/kirchenheft-hochzeit \"Alles für ein perfektes Kirchenheft zur Hochzeit\") thematisiert und wertvolle Entscheidungshilfen vermittelt. Ferner stellen wir zahlreiche Informationen und Inspirationen rund um Ehejubiläen wie Silberhochzeit und Goldene Hochzeit zur Verfügung.\n\n## Plant Eure Hochzeit\n\nWie findet Ihr die besten Dienstleister für Eure Hochzeit? Nahezu jedes Brautpaar stellt sich diese Frage. Daher versuchen wir Euch so gut es geht mit unserem Magazin zu unterstützen. Denn dort findet Ihr zahlreiche Hilfen und Checklisten für die Suche nach den perfekten Dienstleistern! Und solltet Ihr einen Rat benötigen, helfen wir Euch auch gerne bei der Suche nach einem professionellen Hochzeitsplaner oder dem perfekten Hochzeitsfotografen.\n\nWir halten jedenfalls __unzählige Tipps und Tricks__ zur Hochzeit für Dich bereit. Wie bei so vielen Dingen ist es ebenso bei der Planung der eigenen Heirat: Man muss das Rad folglich nicht neu erfinden! Beispielsweise sind hier die [Hochzeitssprüche](/hochzeitssprueche \"Inspirationen für Sprüche zur Hochzeit und Hochzeitssprüche\"). Es ist überdies nicht zwingend notwendig Stunden über Stunden an Mühen und Zeit zu investieren, um sich Trausprüche oder Fürbitten zur Hochzeit zu ersinnen. Selbstverständlich findest Du auch passende Worte und Formulierungen für Eure Hochzeitskarten bei uns. Zum Beispiel zeigen wir Euch die besten Sprüche und Texte für Save-the-Date Karten oder für die Einladungskarten zur Hochzeit: [Hochzeiteinladung - Text](/mustertexte/hochzeitseinladung-text \"Die schönsten Hochzeitseinladungstexte für Eure Hochzeitskarten\").\n\n## Tipps für Gäste zur Hochzeit\n\nAuch für die Gäste bieten wir __zahlreiche Formulierungen__, um die passenden Worte für diesen schönen Anlass zu finden. Von den schönsten Hochzeitsgedichte über bemerkenswerte Zitate von bekannten Persönlichkeiten bis hin zu hübschen und klassischen [Hochzeitswünschen](/hochzeitssprueche/hochzeitswuensche \"Hochzeitswünsche und Wünsche zur Hochzeit\") und [Glückwünschen zur Hochzeit](/hochzeitssprueche/glueckwuensche-zur-hochzeit \"Glückwünsche zur Hochzeit und Hochzeitsglückwünsche\") findet jeder dazu bei uns die richtigen Worte.\nFür jeden steht somit eine genügend große Auswahl an Inspiration zum Thema Heiraten zur Verfügung. Aber nicht nur Sprüche und Texte werden angeboten, sondern ebenfalls eine Vielzahl an zusätzlichen Informationen und Tipps zum Themenkomplex Hochzeitsspiele, Traditionen oder Rituale zur Hochzeit und auch alles rund um den Junggesellenabschied und den Polterabend.\n\n## Keine Hochzeit ohne Geschenke\n\nNichtsdestotrotz kommen die Geschenke für das Brautpaar in unserem Magazin nicht zu kurz. Oder wusstest Du vorher schon, dass es eine Hochzeitslaterne mit Gravur gibt? Der Trend geht dahingehend in den letzten Jahren dahin, dass sich __Brautpaare__ Geld wünschen. Deswegen haben wir einmal die besten und kreativsten Ideen für Geldgeschenke zur Hochzeit zusammengetragen. Mehr findet Ihr dazu in unserem Magazin in der Kategorie Hochzeitsgeschenke.\n\n## Karten von Hochzeitsplaza\n\nBei uns kannst Du zudem individuell gestaltete Hochzeitskarten bestellen. Erkunde doch unseren Kartenshop und durchstöber' unsere große Auswahl an Produkten. Entdecke dabei unsere traumhafte Papeterie und weitere wundervolle Ideen von Einladungskarten über die Menükarten zur Hochzeit und Tischkarten bis hin zur [Danksagung Hochzeit](/mustertexte/danksagung-hochzeit \"Danksagung Hochzeit - Ideen und Textvorschläge\"). \n\nNeben informativen Ratgeberartikeln sind ebenfalls Ringkissen, Brautaccessoires, Gastgeschenke oder lustige Ideen für Euren Junggesellinnenabschied oder Junggesellenabschied auf Hochzeitsplaza zu finden! Suche das Passende für Deine __Heirat__ hierbei bequem über unsere intuitive Suchfunktion oder nutze die übersichtliche Navigation unserer Menüleiste.\n\n## Forum-Austausch vor der Hochzeit\n\nWie gestalten die anderen gut 380.000 Brautpaare in Deutschland (Quelle: [Statistisches Bundesamt](https://www.destatis.de/DE/ZahlenFakten/GesellschaftStaat/Bevoelkerung/Eheschliessungen/Eheschliessungen.html \"Die Statistik der Eheschließungen\")) ihre Feier? Das __Forum von Hochzeitsplaza__ ist übrigens eines der größten Hochzeitsforen Deutschlands. Tausch' Dich dort mit über 60.000 anderen registrierten Mitgliedern über die Vorbereitung, Ideen und Fragen aus. Als werdende Braut, Bräutigam oder als Hochzeitsgast findest Du im Forum Inspirationen und Hilfen. Da werden Themen wie Brautkleider, Hochzeitskarten, Trauung, Brautauto und Planung besprochen und __Empfehlungen__ von echten Brautpaaren gegeben.\n\nWir wünschen Euch jedenfalls viel Spaß beim regen Austauschen im Forum und der Nutzung unseres vielfältigen Angebotes!"
+    },
+    "metaTitle": {
+      "de-de": "Hochzeit & Heirat - Hochzeitsplaza das Hochzeitsportal"
+    },
+    "metaDescription": {
+      "de-de": "Hochzeitsplaza ist die Anlaufstelle für alles zum Thema Hochzeit & Heiraten! Bei uns findet Ihr alle wichtigen Tipps & Infos vom Antrag bis zu den Flitterwochen!"
+    },
+    "metaKeywords": {
+      "de-de": "Hochzeit, Heirat, heiraten, Hochzeitsportal, Hochzeitsplaza"
+    }
+  }
+}
