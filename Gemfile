@@ -25,3 +25,7 @@ gem "activemodel", "~> 7.1"
 gem "faraday-multipart", "~> 1.1"
 
 gem "mime-types", "~> 3.6"
+
+gem "rainbow", "~> 3.1"
+
+gem "logger", "~> 1.6"

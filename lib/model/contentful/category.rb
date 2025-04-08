@@ -20,11 +20,12 @@ module Contentful
 
     link_asset  source: :image_link, target: :image
     link_objects source: :subcategory_links, target: :subcategories
+    link_objects source: :featured_article_links, target: :featured_articles
 
     api_path "/api/categories"
-  
-    def strapi_representer_class
-      Strapi::CategoryRepresenter
+
+    def self.contentful_content_type_id
+      "2vg0mzjdfm4myqIQyqiW0M"
     end
   end
 end

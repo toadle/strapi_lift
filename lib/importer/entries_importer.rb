@@ -1,20 +1,21 @@
 class EntriesImporter
   def run(entries_data)
-    articles_data = entries_data.select { |entry| entry.dig("sys", "id") == "4Wc8rbroPCQmw22qEYG8m8" }
-    homepages_data = entries_data.select { |entry| entry.dig("sys", "id") == "5vXkbOlyUMeS66A8ksqEW4" }
+    [
+      Contentful::Category,
+      Contentful::Homepage,
+      Contentful::Article
+    ].each do |model|
+      filtered_entries = entries_data.select do |entry|
+        entry.dig("sys", "content_type", "sys", "id") == model.contentful_content_type_id
+      end
 
-    homepages_data.each do |homepage_data|
-      homepage = Contentful::Homepage.new
-      Contentful::HomepageRepresenter.new(homepage).from_hash(homepage_data)
+      filtered_entries.each_with_index do |entry_data, index|
+        $logger.log_progress("Processing #{index + 1}/#{filtered_entries.count}", model.name, :info, entry_data.dig("sys", "id"))
 
-      homepage.save!
+        entry = model.new
+        model.contentful_representer_class.new(entry).from_hash(entry_data)
+        entry.save!
+      end
     end
-
-    # articles_data.each do |article_data|
-    #   article = Contentful::Article.new
-    #   Contentful::ArticleRepresenter.new(article).from_hash(article_data)
-
-    #   article.save!
-    # end
   end
 end

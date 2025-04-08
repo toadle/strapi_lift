@@ -10,9 +10,9 @@ module Contentful
     attr_accessor :slug
 
     api_path "/api/image-gallery-tags"
-  
-    def strapi_representer_class
-      Strapi::ImageGalleryTagRepresenter
+
+    def self.contentful_content_type_id
+      "3ks1SSosbmACcEIOsCGsAI"
     end
   end
 end

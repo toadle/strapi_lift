@@ -13,9 +13,9 @@ module Contentful
     link_objects source: :tag_links, target: :tags, always_resolve: true
 
     api_path "/api/image-galleries"
-  
-    def strapi_representer_class
-      Strapi::ImageGalleryRepresenter
+
+    def self.contentful_content_type_id
+      "6ydFFHu0og4QmSeW6UucIK"
     end
   end
 end

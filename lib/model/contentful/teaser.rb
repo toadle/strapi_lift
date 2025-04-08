@@ -12,9 +12,9 @@ module Contentful
     api_path "/api/teasers"
 
     link_asset source: :image_link, target: :image
-  
-    def strapi_representer_class
-      Strapi::TeaserRepresenter
+
+    def self.contentful_content_type_id
+      "3O9Vkz1wEgaUqmeEs6sKmW"
     end
   end
 end

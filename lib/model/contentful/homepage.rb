@@ -15,9 +15,9 @@ module Contentful
 
     api_path "/api/homepage"
     single_content_type!
-  
-    def strapi_representer_class
-      Strapi::HomepageRepresenter
+
+    def self.contentful_content_type_id
+      "42rOugxTn2akMskSggwqKE"
     end
   end
 end

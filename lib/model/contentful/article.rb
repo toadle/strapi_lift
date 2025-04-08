@@ -26,9 +26,9 @@ module Contentful
     link_objects source: :author_links, target: :authors
 
     api_path "/api/articles"
-  
-    def strapi_representer_class
-      Strapi::ArticleRepresenter
+
+    def self.contentful_content_type_id
+      "5duKiNPsR20mgISegMYmwK"
     end
   end
 end

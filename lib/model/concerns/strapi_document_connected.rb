@@ -3,7 +3,6 @@ module StrapiDocumentConnected
 
   REQUIRED_INSTANCE_METHODS = %i[
     title
-    strapi_representer_class
   ]
 
   included do
@@ -81,16 +80,28 @@ module StrapiDocumentConnected
         begin
           connection.get(strapi_api_path).body.dig("data").present?
           connection.delete(strapi_api_path)
-          puts "#{name} deleted successfully."
+          $logger.log_progress("Deleted successfully.", self.name, :info)
         rescue Faraday::ResourceNotFound
           # pass
         end
       else
         connection.get(strapi_api_path).body.dig("data").each do |document|
           connection.delete("#{strapi_api_path}/#{document['documentId']}")
-          puts "#{name} with ID #{document['documentId']} deleted successfully."
+          $logger.log_progress("Deleted strapi ID #{document['documentId']} successfully.", self.name, :info)
         end
       end
+    end
+
+    def strapi_representer_class
+      @strapi_representer_class ||= begin
+        name.gsub("Contentful", "Strapi") + "Representer"
+      end.constantize
+    end
+
+    def contentful_representer_class
+      @contentful_representer_class ||= begin
+        name + "Representer"
+      end.constantize
     end
   end
 
@@ -120,7 +131,11 @@ module StrapiDocumentConnected
           asset = asset_link.resolve_link
           asset.save!
 
-          content.gsub!(asset_url, asset.strapi_file_url)
+          begin
+            content.gsub!(asset_url, asset.strapi_file_url)
+          rescue StandardError => e
+            $logger.log_progress("Error replacing asset URL: #{asset_url} in content '#{rich_text[:source]}'", self.class.name, :error, contentful_id)
+          end
         end
 
         public_send("#{rich_text[:source]}=", content)
@@ -145,7 +160,7 @@ module StrapiDocumentConnected
 
     update_connections!
   rescue Faraday::BadRequestError => e
-    puts JSON.parse(e.response.fetch(:body)).dig("error", "message")
+    $logger.log_progress(JSON.parse(e.response.fetch(:body)).dig("error", "message"), self.class.name, :error, name)
     raise e
   end
 
@@ -211,19 +226,19 @@ module StrapiDocumentConnected
     strapi_entry = response.body.dig("data", 0)
     if strapi_entry
       self.strapi_id = strapi_entry["documentId"]
-      puts "#{strapi_entry_type_name} #{title} already exists in Strapi with ID #{strapi_id}."
+      $logger.log_progress("Already exists in strapi with ID #{strapi_id}.", self.class.name, :info, contentful_id)
       return true
     end
 
     false
   rescue Faraday::BadRequestError => e
-    puts JSON.parse(e.response.fetch(:body)).dig("error", "message")
+    $logger.log_progress(JSON.parse(e.response.fetch(:body)).dig("error", "message"), self.class.name, :error, contentful_id)
     raise e
   end
 
   def save_to_strapi!
     ensure_strapi_methods!
-    representer = strapi_representer_class.new(self)
+    representer = self.class.strapi_representer_class.new(self)
     data = representer.to_hash.transform_keys { |key| key.to_s.camelize(:lower) }
 
     if self.class.single_content_type?
@@ -234,7 +249,7 @@ module StrapiDocumentConnected
     end
 
     self.strapi_id = response.body.dig("data", "documentId")
-    puts "#{strapi_entry_type_name} #{title} imported successfully as #{strapi_id}."
+    $logger.log_progress("Imported successfully as #{strapi_id}.", self.class.name, :info, contentful_id)
   end
 
   def update_connections!
@@ -242,7 +257,7 @@ module StrapiDocumentConnected
 
     strapi_connection.put(self.class.strapi_api_path + "/#{self.strapi_id}", {data: connections_data}) unless self.class.single_content_type?
     strapi_connection.put(self.class.strapi_api_path, {data: connections_data}) if self.class.single_content_type?
-    puts "Connections for #{strapi_entry_type_name} #{title} updated successfully."
+    $logger.log_progress("Connections updated successfully.", self.class.name, :info, contentful_id)
   end
 
   private

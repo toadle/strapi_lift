@@ -29,6 +29,10 @@ module Contentful
         collection :subcategory_links, decorator: Contentful::EntryLinkRepresenter, class: Contentful::CategoryLink, as: :de_de
       end
 
+      nested :featured_articles do
+        collection :featured_article_links, decorator: Contentful::EntryLinkRepresenter, class: Contentful::ArticleLink, as: :de_de
+      end
+
     end
 
     nested :sys do

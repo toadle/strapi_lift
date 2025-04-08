@@ -18,7 +18,7 @@ module StrapiFileConnected
 
       files.each do |file|
         connection.delete("/api/upload/files/#{file['id']}")
-        puts "File #{file["caption"]} with ID #{file['id']} deleted successfully."
+        $logger.log_progress("ID #{file['id']} deleted successfully.", self.name, :info, file["caption"])
       end
     end
   end
@@ -44,12 +44,12 @@ module StrapiFileConnected
         alternativeText: description
       }
       strapi_connection.update_file_info(self.strapi_file_id, metadata)
-      puts "Asset #{title} uploaded successfully."
+      $logger.log_progress("Uploaded successfully as File ID #{self.strapi_file_id}.", self.class.name, :info, title)
     else
-      puts "Failed to upload asset #{title}."
+      $logger.log_progress("Failed to upload asset.", self.class.name, :error, title)
     end
   rescue StandardError => e
-    puts "Error uploading asset #{title}: #{e.message}"
+    $logger.log_progress("Error uploading asset: #{e.message}", self.class.name, :error, title)
   end
 
   def present_in_strapi?
@@ -59,7 +59,7 @@ module StrapiFileConnected
 
     self.strapi_file_id = strapi_file_info.dig("id")
     self.strapi_file_url = strapi_file_info.dig("url")
-    puts "Asset #{title} already exists in Strapi with ID #{self.strapi_file_id}."
+    $logger.log_progress("Already exists in Strapi with ID #{self.strapi_file_id}.", self.class.name, :info, title)
     return true
   end
 

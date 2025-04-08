@@ -11,7 +11,8 @@ module Contentful
     end
 
     def file_name
-      File.basename(URI.parse(url).path)
+      encoded_url = URI::DEFAULT_PARSER.escape(url)
+      File.basename(URI.parse(encoded_url).path)
     end
   end
 end
