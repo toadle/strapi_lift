@@ -37,6 +37,8 @@ class Cli < Thor
   desc "import", "Import contentful export JSON file"
   method_option :contentful_content, type: :string, required: true, desc: "Path to contentful content JSON file"
   method_option :assets_folder, type: :string, required: true, desc: "Path to asset folder"
+  method_option :content_types, type: :string, desc: "Comma-separated list of content types with optional limits (e.g., 'articles:10,categories')"
+  method_option :ids, type: :string, desc: "Comma-separated list of entry IDs to import (e.g., '1RkSbh3cnuK2iCsSUig66S,2AbCdEfGhIjKlMnOpQrStUv')"
   def import
     unless File.exist?(options[:contentful_content])
       exit(1)
@@ -46,6 +48,16 @@ class Cli < Thor
       exit(1)
     end
 
+    content_types = {}
+    if options[:content_types]
+      options[:content_types].split(",").each do |type|
+        name, limit = type.split(":")
+        content_types[name] = limit ? limit.to_i : nil
+      end
+    end
+
+    ids = options[:ids] ? options[:ids].split(",") : []
+
     begin
       contentful_data = JSON.parse(File.read(options[:contentful_content])).deep_transform_keys { |key| key.to_s.underscore }
       $entries_data = contentful_data.fetch("entries")
@@ -53,7 +65,7 @@ class Cli < Thor
       $assets_folder = options[:assets_folder]
 
       $logger.info("Starting import process...")
-      EntriesImporter.new.run($entries_data)
+      EntriesImporter.new.run($entries_data, content_types, ids)
       $logger.info("Import process completed successfully.")
     rescue JSON::ParserError => e
       $logger.special_log("error", "Cli", "Import", "Error parsing contentful content JSON: #{e.message}")

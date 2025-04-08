@@ -134,7 +134,7 @@ module StrapiDocumentConnected
           begin
             content.gsub!(asset_url, asset.strapi_file_url)
           rescue StandardError => e
-            $logger.log_progress("Error replacing asset URL: #{asset_url} in content '#{rich_text[:source]}'", self.class.name, :error, contentful_id)
+            $logger.log_progress("Error replacing asset URL: #{asset_url} in '#{rich_text[:source]}'", self.class.name, :error, contentful_id)
           end
         end
 
