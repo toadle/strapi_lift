@@ -88,12 +88,21 @@ module StrapiDocumentConnected
           connection.delete(strapi_api_path)
           logger.info("Deleted successfully.")
         rescue Faraday::ResourceNotFound
-          # pass
+          logger.info("No data to delete.")
         end
       else
-        connection.get(strapi_api_path).body.dig("data").each do |document|
-          connection.delete("#{strapi_api_path}/#{document['documentId']}")
-          logger.info("Deleted strapi ID #{document['documentId']} successfully.")
+        page_size = 25
+        loop do
+          response = connection.get("#{strapi_api_path}?pagination[pageSize]=#{page_size}")
+          data = response.body.dig("data")
+          break if data.empty?
+
+          data.each do |document|
+            connection.delete("#{strapi_api_path}/#{document['documentId']}")
+            logger.info("Deleted successfully", strapi_id: document['documentId'])
+          end
+
+          break if data.size < page_size
         end
       end
     end
