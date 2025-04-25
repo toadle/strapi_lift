@@ -83,8 +83,24 @@ module StrapiFileConnected
 
   def discover_file_path
     file_path = File.join($assets_folder, URI.parse(url).path)
-    raise "File not found: #{file_path}" unless File.exist?(file_path)
-    file_path
+    
+    if File.exist?(file_path)
+      if File.size(file_path) > 0
+        return file_path
+      else
+        logger.warn("File is empty", file_path: file_path)
+      end
+    end
+
+    folder = File.dirname(file_path)
+    fallback_file = Dir.glob(File.join(folder, '*')).find { |f| File.size(f) > 0 }
+
+    if fallback_file
+      logger.warn("Using fallback file", expected: file_path, used: fallback_file)
+      return fallback_file
+    else
+      raise "File not found, empty, and no fallback available in folder: #{folder}"
+    end
   end
 
   def strapi_connection
