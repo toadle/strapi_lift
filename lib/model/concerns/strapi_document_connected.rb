@@ -113,9 +113,10 @@ module StrapiDocumentConnected
       resolved_objects = link_objects.map do |link_object|
         raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
         resolved = link_object.resolve_link
+        next unless resolved
         resolved.save!(follow_object_links: false)
         resolved
-      end
+      end.compact
 
       instance_variable_set("@#{link[:target]}", link[:multiple] ? resolved_objects : resolved_objects.first)
     end
@@ -129,6 +130,7 @@ module StrapiDocumentConnected
         asset_urls.each do |asset_url|
           asset_link = Contentful::AssetLink.from_url(asset_url)
           asset = asset_link.resolve_link
+          next unless asset
           asset.save!
 
           begin
@@ -146,10 +148,9 @@ module StrapiDocumentConnected
         resolved_assets = link_assets.map do |link_asset|
           raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
           resolved = link_asset.resolve_link
-          if resolved
-            resolved.save!
-            resolved.strapi_file_id
-          end
+          next unless resolved
+          resolved.save!
+          resolved.strapi_file_id
         end.compact
 
         instance_variable_set("@#{link[:target]}#{link[:multiple] ? '_ids' : '_id'}", link[:multiple] ? resolved_assets : resolved_assets.first)
@@ -222,7 +223,7 @@ module StrapiDocumentConnected
         contentfulId: { "$eq": contentful_id }
       }
     })
-  
+
     strapi_entry = response.body.dig("data", 0)
     if strapi_entry
       self.strapi_id = strapi_entry["documentId"]
