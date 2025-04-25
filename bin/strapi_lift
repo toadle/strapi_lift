@@ -6,34 +6,17 @@ require 'dotenv/load'
 require 'active_support/all'
 require 'representable'
 require "pry"
-require "rainbow" # For colorized output
-require "logger"  # For standard logging
+require "semantic_logger"
 
-$logger = Logger.new(STDOUT)
-$logger.level = Logger::INFO
-
-def $logger.log_progress(message, classname, log_level = :info, title = "")
-  log_level_color = case log_level.to_sym.downcase
-                    when :info then :green
-                    when :warn then :yellow
-                    when :error then :red
-                    else :white
-                    end
-
-  classname_color = :blue
-
-  title_part = title.nil? || title.empty? ? "" : "#{Rainbow(title).color(:gray)}: "
-
-  puts "#{Rainbow("[#{log_level.upcase}]").color(log_level_color)} " \
-       "#{Rainbow(classname).color(classname_color)} " \
-       "#{title_part}#{message}"
-end
+SemanticLogger.default_level = :info
+SemanticLogger.add_appender(io: $stdout, formatter: :color)
+SemanticLogger.add_appender(file_name: 'log.jsonl', formatter: :json)
 
 Dir.glob(File.expand_path("../lib/**/*.rb", __dir__)).sort.each do |file|
   require file
 end
 
-class Cli < Thor
+class Cli < Thor  
   desc "import", "Import contentful export JSON file"
   method_option :contentful_content, type: :string, required: true, desc: "Path to contentful content JSON file"
   method_option :assets_folder, type: :string, required: true, desc: "Path to asset folder"
@@ -57,6 +40,7 @@ class Cli < Thor
     end
 
     ids = options[:ids] ? options[:ids].split(",") : []
+    logger = SemanticLogger['strapi_lift']
 
     begin
       contentful_data = JSON.parse(File.read(options[:contentful_content])).deep_transform_keys { |key| key.to_s.underscore }
@@ -64,18 +48,20 @@ class Cli < Thor
       $assets_data = contentful_data.fetch("assets")
       $assets_folder = options[:assets_folder]
 
-      $logger.info("Starting import process...")
+      logger.info("Starting import process...")
       EntriesImporter.new.run($entries_data, content_types, ids)
-      $logger.info("Import process completed successfully.")
+      logger.info("Import process completed successfully.")
     rescue JSON::ParserError => e
-      $logger.special_log("error", "Cli", "Import", "Error parsing contentful content JSON: #{e.message}")
+      logger.error("Error parsing contentful content JSON", message: e.message)
       exit(1)
     end
   end
 
   desc "reset", "Deletes all content from strapi"
   def reset
-    $logger.info("Starting reset process...")
+    logger = SemanticLogger['strapi_lift']
+
+    logger.info("Starting reset process...")
     Contentful::Article.reset_strapi!
     Contentful::Category.reset_strapi!
     Contentful::ImageGallery.reset_strapi!
@@ -84,7 +70,7 @@ class Cli < Thor
     Contentful::Teaser.reset_strapi!
     Contentful::Author.reset_strapi!
     Contentful::Asset.reset_strapi!
-    $logger.info("Reset process completed successfully.")
+    logger.info("Reset process completed successfully.")
   end
 end
 

@@ -1,3 +1,5 @@
+require 'semantic_logger'
+
 module StrapiFileConnected
   extend ActiveSupport::Concern
 
@@ -11,6 +13,10 @@ module StrapiFileConnected
   ]
 
   class_methods do
+    def logger
+      @logger ||= SemanticLogger[self.name]
+    end
+
     def reset_strapi!
       connection = Strapi::Connection.new
       response = connection.get("/api/upload/files")
@@ -18,9 +24,13 @@ module StrapiFileConnected
 
       files.each do |file|
         connection.delete("/api/upload/files/#{file['id']}")
-        $logger.log_progress("ID #{file['id']} deleted successfully.", self.name, :info, file["caption"])
+        logger.info("Deleted successfully", id: file['id'], caption: file['caption'])
       end
     end
+  end
+
+  def logger
+    self.class.logger
   end
 
   def ensure_strapi_methods!
@@ -44,12 +54,12 @@ module StrapiFileConnected
         alternativeText: description
       }
       strapi_connection.update_file_info(self.strapi_file_id, metadata)
-      $logger.log_progress("Uploaded successfully as File ID #{self.strapi_file_id}.", self.class.name, :info, title)
+      logger.info("Uploaded successfully", file_id: self.strapi_file_id, title: title)
     else
-      $logger.log_progress("Failed to upload asset.", self.class.name, :error, title)
+      logger.error("Failed to upload asset", title: title)
     end
   rescue StandardError => e
-    $logger.log_progress("Error uploading asset: #{e.message}", self.class.name, :error, title)
+    logger.error("Error uploading asset", message: e.message, title: title)
   end
 
   def present_in_strapi?
@@ -59,7 +69,7 @@ module StrapiFileConnected
 
     self.strapi_file_id = strapi_file_info.dig("id")
     self.strapi_file_url = strapi_file_info.dig("url")
-    $logger.log_progress("Already exists in Strapi with ID #{self.strapi_file_id}.", self.class.name, :info, title)
+    logger.info("Found existing file", strapi_file_id: self.strapi_file_id, title: title)
     return true
   end
 

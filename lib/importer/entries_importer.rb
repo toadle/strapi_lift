@@ -1,4 +1,10 @@
+require 'semantic_logger'
+
 class EntriesImporter
+  def logger
+    @logger ||= SemanticLogger[self.class.name]
+  end
+
   def run(entries_data, content_types = {}, ids = [])
     [
       Contentful::Category,
@@ -16,7 +22,7 @@ class EntriesImporter
       filtered_entries = filtered_entries.first(limit) if limit
 
       filtered_entries.each_with_index do |entry_data, index|
-        $logger.log_progress("Processing #{index + 1}/#{filtered_entries.count}", model.name, :info, entry_data.dig("sys", "id"))
+        logger.info("Processing #{index + 1}/#{filtered_entries.count}", id: entry_data.dig("sys", "id"), model: model_name)
 
         entry = model.new
         model.contentful_representer_class.new(entry).from_hash(entry_data)

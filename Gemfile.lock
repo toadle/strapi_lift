@@ -72,6 +72,8 @@ GEM
     rspec-support (3.13.2)
     ruby2_keywords (0.0.5)
     securerandom (0.3.2)
+    semantic_logger (4.16.1)
+      concurrent-ruby (~> 1.0)
     thor (1.3.2)
     trailblazer-option (0.1.2)
     tzinfo (2.0.6)
@@ -94,6 +96,7 @@ DEPENDENCIES
   rainbow (~> 3.1)
   representable (~> 3.2)
   rspec (~> 3.13)
+  semantic_logger (~> 4.16)
   thor
 
 BUNDLED WITH

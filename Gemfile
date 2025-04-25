@@ -29,3 +29,5 @@ gem "mime-types", "~> 3.6"
 gem "rainbow", "~> 3.1"
 
 gem "logger", "~> 1.6"
+
+gem "semantic_logger", "~> 4.16"

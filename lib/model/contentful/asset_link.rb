@@ -1,6 +1,12 @@
+require 'semantic_logger'
+
 module Contentful
   class AssetLink
     attr_accessor :id
+
+    def logger
+      @logger ||= SemanticLogger[self.class.name]
+    end
 
     def self.from_url(url)
       encoded_url = URI::DEFAULT_PARSER.escape(url.start_with?("//") ? "https:#{url}" : url)
@@ -15,16 +21,16 @@ module Contentful
     end
 
     def resolve_link
+      logger.info("Resolving", id: id)
       asset_data = $assets_data.select { |asset| asset.dig("sys", "id") == id }
 
       if asset_data.empty?
-        $logger.log_progress("AssetLink could not be resolved", self.class.name, :error, id)
+        logger.error("Could not be resolved", id: id)
         return
       end
 
       asset = Asset.new
       AssetRepresenter.new(asset).from_hash(asset_data.first)
-      $logger.log_progress("Processing '#{asset.title}' through link.", self.class.name, :info, id)
       asset
     end
   end
