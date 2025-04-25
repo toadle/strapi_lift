@@ -48,10 +48,18 @@ module StrapiFileConnected
     self.strapi_file_id = upload_response.first.dig("id")
     self.strapi_file_url = upload_response.first.dig("url")
 
+    if title.present? && title.length > 255
+      logger.warn("Title too long, truncating", title: title)
+    end
+
+    if description.present? && description.length > 255
+      logger.warn("Description too long, truncating", description: description)
+    end
+
     if self.strapi_file_id
       metadata = {
-        caption: title,
-        alternativeText: description
+        caption: title&.truncate(255),
+        alternativeText: description&.truncate(255),
       }
       strapi_connection.update_file_info(self.strapi_file_id, metadata)
       logger.info("Uploaded successfully", file_id: self.strapi_file_id, title: title)

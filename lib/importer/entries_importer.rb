@@ -7,9 +7,10 @@ class EntriesImporter
 
   def run(entries_data, content_types = {}, ids = [])
     [
+      Contentful::Author,
       Contentful::Category,
-      Contentful::Homepage,
-      Contentful::Article
+      Contentful::Article,
+      Contentful::Homepage
     ].each do |model|
       model_name = model.name.split("::").last.underscore.pluralize
       next if content_types.any? && !content_types.key?(model_name)
