@@ -1,4 +1,5 @@
 require 'semantic_logger'
+require 'parallel'
 
 module StrapiFileConnected
   extend ActiveSupport::Concern
@@ -22,7 +23,7 @@ module StrapiFileConnected
       response = connection.get("/api/upload/files")
       files = response.body || []
 
-      files.each do |file|
+      Parallel.each(files, in_threads: 10) do |file|
         connection.delete("/api/upload/files/#{file['id']}")
         logger.info("Deleted successfully", id: file['id'], caption: file['caption'])
       end

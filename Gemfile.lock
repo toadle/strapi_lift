@@ -46,6 +46,7 @@ GEM
     multi_json (1.15.0)
     multipart-post (2.4.1)
     mutex_m (0.3.0)
+    parallel (1.27.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -92,6 +93,7 @@ DEPENDENCIES
   logger (~> 1.6)
   mime-types (~> 3.6)
   multi_json (~> 1.15)
+  parallel
   pry-byebug (~> 3.10)
   rainbow (~> 3.1)
   representable (~> 3.2)
