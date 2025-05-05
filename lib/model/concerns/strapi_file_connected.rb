@@ -82,15 +82,21 @@ module StrapiFileConnected
     return true
   end
 
+  def encoded_url
+    URI::DEFAULT_PARSER.escape(url)
+  end
+
+  def path
+    URI.parse(encoded_url).path
+  end
+
   def discover_file_path
-    file_path = File.join($assets_folder, URI.parse(url).path)
+    file_path = File.join($assets_folder, path)
     
-    if File.exist?(file_path)
-      if File.size(file_path) > 0
-        return file_path
-      else
-        logger.warn("File is empty", file_path: file_path)
-      end
+    if file_exists? && !file_empty?
+      return file_path
+    else
+      logger.warn("File is empty or does not exist", file_path: file_path)
     end
 
     folder = File.dirname(file_path)
@@ -102,6 +108,38 @@ module StrapiFileConnected
     else
       raise "File not found, empty, and no fallback available in folder: #{folder}"
     end
+  end
+
+  def file_exists?
+    file_path = File.join($assets_folder, path)
+    return File.exist?(file_path)
+  end
+
+  def file_empty?
+    file_path = File.join($assets_folder, path)
+    return File.size(file_path) <= 0
+  end
+
+  def download_file!
+    original_path = File.join($assets_folder, path)
+    fixed_path = original_path.sub(/(\.\w+)$/, '_fixed\1')
+
+    if File.exist?(fixed_path)
+      logger.warn("Fixed file already exists, skipping download", fixed_path: fixed_path)
+      return
+    end
+
+    # Sicherstellen, dass die URL ein Protokoll enthält
+    full_url = url.start_with?("http://", "https://") ? url : "https:#{url}"
+
+    File.open(fixed_path, "wb") do |file|
+      logger.info("Downloading file", url: full_url, fixed_path: fixed_path)
+      file.write(Net::HTTP.get(URI(full_url)))
+    end
+    logger.info("File downloaded successfully", url: full_url, fixed_path: fixed_path)
+  rescue StandardError => e
+    logger.error("Failed to download file", url: full_url, error: e.message)
+    raise
   end
 
   def strapi_connection

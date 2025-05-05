@@ -7,6 +7,7 @@ require 'active_support/all'
 require 'representable'
 require "pry"
 require "semantic_logger"
+require "net/http"
 
 SemanticLogger.default_level = :info
 SemanticLogger.add_appender(io: $stdout, formatter: :color)
@@ -71,6 +72,51 @@ class Cli < Thor
     Contentful::Author.reset_strapi!
     Contentful::Asset.reset_strapi!
     logger.info("Reset process completed successfully.")
+  end
+
+  desc "fix-assets", "Fix assets by ensuring all files are valid and downloading missing ones"
+  method_option :contentful_content, type: :string, required: true, desc: "Path to contentful content JSON file"
+  method_option :assets_folder, type: :string, required: true, desc: "Path to asset folder"
+  def fix_assets
+    unless File.exist?(options[:contentful_content])
+      logger.error("Contentful content file not found", path: options[:contentful_content])
+      exit(1)
+    end
+
+    unless Dir.exist?(options[:assets_folder])
+      logger.error("Assets folder not found", path: options[:assets_folder])
+      exit(1)
+    end
+
+    logger = SemanticLogger['strapi_lift']
+
+    begin
+      contentful_data = JSON.parse(File.read(options[:contentful_content])).deep_transform_keys { |key| key.to_s.underscore }
+      assets_data = contentful_data.fetch("assets")
+      $assets_folder = options[:assets_folder]
+
+      logger.info("Starting asset validation process...")
+
+      assets_data.each do |asset_data|
+        asset = Contentful::Asset.new
+        Contentful::AssetRepresenter.new(asset).from_hash(asset_data)
+
+        unless asset.file_exists?
+          logger.error("Asset #{asset.path} does not exist.")
+          next
+        end
+
+        if asset.file_empty?
+          logger.warn("Asset #{asset.path} is empty. Attempting download.")
+          asset.download_file!
+        end
+      end
+
+      logger.info("Asset validation process completed successfully.")
+    rescue JSON::ParserError => e
+      logger.error("Error parsing contentful content JSON", message: e.message)
+      exit(1)
+    end
   end
 end
 
