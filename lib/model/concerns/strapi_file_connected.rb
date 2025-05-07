@@ -86,12 +86,16 @@ module StrapiFileConnected
     URI::DEFAULT_PARSER.escape(url)
   end
 
+  def host
+    URI.parse(encoded_url).host
+  end
+
   def path
     URI.parse(encoded_url).path
   end
 
   def discover_file_path
-    file_path = File.join($assets_folder, path)
+    file_path = File.join($assets_folder, host, path)
     
     if file_exists? && !file_empty?
       return file_path
@@ -111,17 +115,17 @@ module StrapiFileConnected
   end
 
   def file_exists?
-    file_path = File.join($assets_folder, path)
+    file_path = File.join($assets_folder, host, path)
     return File.exist?(file_path)
   end
 
   def file_empty?
-    file_path = File.join($assets_folder, path)
+    file_path = File.join($assets_folder, host, path)
     return File.size(file_path) <= 0
   end
 
   def download_file!
-    original_path = File.join($assets_folder, path)
+    original_path = File.join($assets_folder, host, path)
     fixed_path = original_path.sub(/(\.\w+)$/, '_fixed\1')
 
     if File.exist?(fixed_path)

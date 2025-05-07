@@ -1,1 +1,4 @@
 *.jsonl
+/.env
+/assets
+/contentful_export.json
