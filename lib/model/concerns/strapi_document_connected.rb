@@ -126,9 +126,13 @@ module StrapiDocumentConnected
 
   def save!(follow_object_links: true)
     resolve_object_links(follow_object_links)
-    resolve_rich_text_fields unless present_in_strapi?
-    resolve_asset_links unless present_in_strapi?
-    save_to_strapi! unless present_in_strapi?
+    resolve_rich_text_fields
+    resolve_asset_links
+    if present_in_strapi?
+      update_on_strapi!
+    else
+      save_to_strapi!
+    end
     update_connections!
   rescue Faraday::BadRequestError => e
     logger.error(JSON.parse(e.response.fetch(:body)).dig("error", "message"))
@@ -214,13 +218,31 @@ module StrapiDocumentConnected
 
     if self.class.single_content_type?
       data.delete("contentfulId")
-      response = strapi_connection.put(self.class.strapi_api_path, { data: data }) if self.class.single_content_type?
+      response = strapi_connection.put(self.class.strapi_api_path, { data: data })
     else
-      response = strapi_connection.post(self.class.strapi_api_path, { data: data }) unless self.class.single_content_type?
+      response = strapi_connection.post(self.class.strapi_api_path, { data: data })
     end
 
     self.strapi_id = response.body.dig("data", "documentId")
     logger.info("Imported successfully", strapi_id: strapi_id, contentful_id: contentful_id)
+  end
+
+  def update_on_strapi!
+    ensure_strapi_methods!
+    representer = self.class.strapi_representer_class.new(self)
+    data = representer.to_hash.transform_keys { |key| key.to_s.camelize(:lower) }
+
+    if self.class.single_content_type?
+      data.delete("contentfulId")
+      response = strapi_connection.put(self.class.strapi_api_path, { data: data })
+    else
+      response = strapi_connection.put(self.class.strapi_api_path + "/#{self.strapi_id}", { data: data })
+    end
+
+    logger.info("Updated successfully", strapi_id: strapi_id, contentful_id: contentful_id)
+  rescue Faraday::BadRequestError => e
+    logger.error(JSON.parse(e.response.fetch(:body)).dig("error", "message"))
+    raise e
   end
 
   def update_connections!
