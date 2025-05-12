@@ -48,7 +48,7 @@ module StrapiDocumentConnected
         return [] unless send(source)
 
         content = send(source)
-        content.scan(/\(((?:https?:)?\/\/(?:assets|images|videos)\.ctfassets\.net\/[^)\s]+)\)/i)
+        content.scan(/\(((?:https?:)?\/\/(?:assets|images|videos)\.(ctfassets\.net|contentful\.com)\/[^)\s]+)\)/i)
           .map(&:first)
           .uniq
       end
@@ -125,59 +125,10 @@ module StrapiDocumentConnected
   end
 
   def save!(follow_object_links: true)
-    self.class.object_links.each do |link|
-      next unless follow_object_links || (link[:always_resolve] && !present_in_strapi?)
-
-      link_objects = Array(public_send(link[:source]))
-      resolved_objects = link_objects.map do |link_object|
-        raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
-        resolved = link_object.resolve_link
-        next unless resolved
-        resolved.save!(follow_object_links: false)
-        resolved
-      end.compact
-
-      instance_variable_set("@#{link[:target]}", link[:multiple] ? resolved_objects : resolved_objects.first)
-    end
-
-    unless present_in_strapi?
-      self.class.rich_text_fields.each do |rich_text|
-        content = public_send(rich_text[:source])
-        next unless content
-
-        asset_urls = public_send("#{rich_text[:source]}_asset_urls")
-        asset_urls.each do |asset_url|
-          asset_link = Contentful::AssetLink.from_url(asset_url)
-          asset = asset_link.resolve_link
-          next unless asset
-          asset.save!
-
-          begin
-            content.gsub!(asset_url, asset.strapi_file_url)
-          rescue StandardError => e
-            logger.error("Error replacing asset URL", asset_url: asset_url, rich_text_source: rich_text[:source], contentful_id: contentful_id)
-          end
-        end
-
-        public_send("#{rich_text[:source]}=", content)
-      end
-
-      self.class.asset_links.each do |link|
-        link_assets = Array(public_send(link[:source]))
-        resolved_assets = link_assets.map do |link_asset|
-          raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
-          resolved = link_asset.resolve_link
-          next unless resolved
-          resolved.save!
-          resolved.strapi_file_id
-        end.compact
-
-        instance_variable_set("@#{link[:target]}#{link[:multiple] ? '_ids' : '_id'}", link[:multiple] ? resolved_assets : resolved_assets.first)
-      end
-
-      save_to_strapi!
-    end
-
+    resolve_object_links(follow_object_links)
+    resolve_rich_text_fields unless present_in_strapi?
+    resolve_asset_links unless present_in_strapi?
+    save_to_strapi! unless present_in_strapi?
     update_connections!
   rescue Faraday::BadRequestError => e
     logger.error(JSON.parse(e.response.fetch(:body)).dig("error", "message"))
@@ -281,6 +232,61 @@ module StrapiDocumentConnected
   end
 
   private
+
+  def resolve_object_links(follow_object_links)
+    self.class.object_links.each do |link|
+      next unless follow_object_links || (link[:always_resolve] && !present_in_strapi?)
+
+      link_objects = Array(public_send(link[:source]))
+      resolved_objects = link_objects.map do |link_object|
+        raise "Link object can not be resolved" unless link_object.respond_to?(:resolve_link)
+        resolved = link_object.resolve_link
+        next unless resolved
+        resolved.save!(follow_object_links: false)
+        resolved
+      end.compact
+
+      instance_variable_set("@#{link[:target]}", link[:multiple] ? resolved_objects : resolved_objects.first)
+    end
+  end
+
+  def resolve_rich_text_fields
+    self.class.rich_text_fields.each do |rich_text|
+      content = public_send(rich_text[:source])
+      next unless content
+
+      asset_urls = public_send("#{rich_text[:source]}_asset_urls")
+      asset_urls.each do |asset_url|
+        asset_link = Contentful::AssetLink.from_url(asset_url)
+        asset = asset_link.resolve_link
+        next unless asset
+        asset.save!
+
+        begin
+          content.gsub!(asset_url, asset.strapi_file_url)
+        rescue StandardError => e
+          logger.error("Error replacing asset URL", asset_url: asset_url, rich_text_source: rich_text[:source], contentful_id: contentful_id)
+        end
+      end
+
+      public_send("#{rich_text[:source]}=", content)
+    end
+  end
+
+  def resolve_asset_links
+    self.class.asset_links.each do |link|
+      link_assets = Array(public_send(link[:source]))
+      resolved_assets = link_assets.map do |link_asset|
+        raise "Link asset can not be resolved" unless link_asset.respond_to?(:resolve_link)
+        resolved = link_asset.resolve_link
+        next unless resolved
+        resolved.save!
+        resolved.strapi_file_id
+      end.compact
+
+      instance_variable_set("@#{link[:target]}#{link[:multiple] ? '_ids' : '_id'}", link[:multiple] ? resolved_assets : resolved_assets.first)
+    end
+  end
 
   def strapi_entry_type_name
     self.class.name
