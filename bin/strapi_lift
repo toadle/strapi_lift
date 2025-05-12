@@ -23,6 +23,7 @@ class Cli < Thor
   method_option :assets_folder, type: :string, required: true, desc: "Path to asset folder"
   method_option :content_types, type: :string, desc: "Comma-separated list of content types with optional limits (e.g., 'articles:10,categories')"
   method_option :ids, type: :string, desc: "Comma-separated list of entry IDs to import (e.g., '1RkSbh3cnuK2iCsSUig66S,2AbCdEfGhIjKlMnOpQrStUv')"
+  method_option :skip, type: :numeric, default: 0, desc: "Number of entries to skip at the beginning"
   def import
     unless File.exist?(options[:contentful_content])
       exit(1)
@@ -41,6 +42,7 @@ class Cli < Thor
     end
 
     ids = options[:ids] ? options[:ids].split(",") : []
+    skip = options[:skip]
     logger = SemanticLogger['strapi_lift']
 
     begin
@@ -50,7 +52,7 @@ class Cli < Thor
       $assets_folder = options[:assets_folder]
 
       logger.info("Starting import process...")
-      EntriesImporter.new.run($entries_data, content_types, ids)
+      EntriesImporter.new.run($entries_data, content_types, ids, skip: skip)
       logger.info("Import process completed successfully.")
     rescue JSON::ParserError => e
       logger.error("Error parsing contentful content JSON", message: e.message)

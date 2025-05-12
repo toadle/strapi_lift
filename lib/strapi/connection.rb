@@ -2,6 +2,14 @@ require "faraday"
 require 'faraday/multipart'
 require "mime/types"
 
+DEFAULT_RETRY_ERRORS = [
+  Net::ReadTimeout,
+  Faraday::TimeoutError,
+  Faraday::ConnectionFailed
+]
+
+require_relative "retry_proxy"
+
 module Strapi
   class Connection
     attr_reader :conn
@@ -9,7 +17,7 @@ module Strapi
     delegate :get, :post, :put, :patch, :delete, to: :conn
 
     def initialize
-      @conn = Faraday.new(
+      raw_conn = Faraday.new(
         url: ENV.fetch("STRAPI_URL"),
         headers: {
           Authorization: "Bearer #{ENV.fetch("STRAPI_API_TOKEN")}"
@@ -21,6 +29,8 @@ module Strapi
         connection.response :json
         connection.response :raise_error
       end
+
+      @conn = RetryProxy.new(raw_conn, attempts: 3, on: DEFAULT_RETRY_ERRORS)
     end
 
     def upload_file(file_path)
@@ -49,7 +59,6 @@ module Strapi
           "name": { "$eq": file_name }
         }
       })
-
       if response.success?
         return response.body.first if response.body.any?
       end

@@ -5,7 +5,7 @@ class EntriesImporter
     @logger ||= SemanticLogger[self.class.name]
   end
 
-  def run(entries_data, content_types = {}, ids = [])
+  def run(entries_data, content_types = {}, ids = [], skip: 0)
     [
       Contentful::Author,
       Contentful::Category,
@@ -23,6 +23,10 @@ class EntriesImporter
       filtered_entries = filtered_entries.first(limit) if limit
 
       filtered_entries.each_with_index do |entry_data, index|
+        if skip > 0 && index < skip
+          logger.info("Skipping #{index + 1}/#{filtered_entries.count}", id: entry_data.dig("sys", "id"), model: model_name)
+          next
+        end
         logger.info("Processing #{index + 1}/#{filtered_entries.count}", id: entry_data.dig("sys", "id"), model: model_name)
 
         entry = model.new
