@@ -1,4 +1,4 @@
-# strapi_Lift - Contentful to Strapi Importer
+# strapi_lift - Contentful to Strapi Importer
 
 A Ruby-based CLI tool for converting and importing [Contentful](https://www.contentful.com) into [Strapi](https://strapi.io). This tool handles the migration of entries and assets. You'll have to create the needed content types in Strapi beforehand.
 
