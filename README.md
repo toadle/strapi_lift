@@ -1,9 +1,9 @@
-# strapi_Lift - Contentful to Strapi Importer
+# strapi_lift - Contentful to Strapi Importer
 
 A Ruby-based CLI tool for converting and importing [Contentful](https://www.contentful.com) into [Strapi](https://strapi.io). This tool handles the migration of entries and assets. You'll have to create the needed content types in Strapi beforehand.
 
 ## Disclaimer
-`strapi_lift` was created to assist with the migration of a Contentful instance to Strapi (for [this website](https://www.hochzeitsplaza.de/)). We successfully migrated around ~11GB of assets and ~2000 entries from Contentful to Strapi with this tool. However, it is not a one-size-fits-all solution. The tool **WILL** require adjustments to fit your specific use case, especially if you have custom content types or complex relationships. You need to know `ruby` and to understand a good portion of the inner workings of this importer in order to use it. This tool was created for a one-time migration, **After all we hope the always ever use this script once**.
+`strapi_lift` was created to assist with the migration of a Contentful instance to Strapi (for [this website](https://www.hochzeitsplaza.de/)). We successfully migrated around ~11GB of assets and ~2000 entries from Contentful to Strapi with this tool. However, it is not a one-size-fits-all solution. The tool **WILL** require adjustments to fit your specific use case, especially if you have custom content types or complex relationships. You need to know `ruby` and to understand a good portion of the inner workings of this importer in order to use it. This tool was created for a one-time migration, **after all we all hope to always ever use scripts like these once**.
 
 If you need help migrating from Contentful to Strapi, [please reach out to me](https://toadle.me/de). I'm happy to help you with your migration and can offer a more tailored solution for your specific needs.
 
