@@ -7,12 +7,14 @@ module Contentful
 
     nested :fields do
       %w(
-          title 
+          title
+          description
+          service_provider
         ).each do |property_name|
         nested property_name do
           property property_name, as: :de_de
         end
-  
+
         nested :images do
           collection :image_links, decorator: Contentful::AssetLinkRepresenter, class: Contentful::AssetLink, as: :de_de
         end
