@@ -8,15 +8,16 @@ A Ruby-based CLI tool for converting and importing [Contentful](https://www.cont
 If you need help migrating from Contentful to Strapi, [please reach out to me](https://toadle.me/de). I'm happy to help you with your migration and can offer a more tailored solution for your specific needs.
 
 ## Limitations
-- Does not handle the creation of content types in Strapi. You must create the necessary content types in Strapi before running the import.
-- No localization support.
+- Does not handle the creation of **content types** in Strapi. You must create the necessary content types in Strapi before running the import.
+- **No support** for cms blocks/rich text fields 
+- **No localization** support.
 
 ## Features
 
 - Imports Contentful JSON exports into Strapi
 - Supports multiple content types and relationships
 - Handles asset imports and links
-- Also handles assets in rich text fields
+- Also handles assets/images in markdown text fields
 - Detailed JSON logging
 - Selective content type import
 - Asset validation and repair
