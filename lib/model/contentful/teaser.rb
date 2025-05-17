@@ -13,8 +13,6 @@ module Contentful
 
     link_asset source: :image_link, target: :image
 
-    def self.contentful_content_type_id
-      "3O9Vkz1wEgaUqmeEs6sKmW"
-    end
+    contentful_content_type "3O9Vkz1wEgaUqmeEs6sKmW"
   end
 end

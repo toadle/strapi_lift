@@ -9,12 +9,10 @@ module Contentful
 
     api_path "/api/authors"
 
+    contentful_content_type "3zb7KwmSIESGK2E4iw8ogG"
+
     def title
       name
-    end
-
-    def self.contentful_content_type_id
-      "3zb7KwmSIESGK2E4iw8ogG"
     end
   end
 end

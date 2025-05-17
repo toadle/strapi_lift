@@ -24,8 +24,6 @@ module Contentful
 
     api_path "/api/categories"
 
-    def self.contentful_content_type_id
-      "2vg0mzjdfm4myqIQyqiW0M"
-    end
+    contentful_content_type "2vg0mzjdfm4myqIQyqiW0M"
   end
 end

@@ -14,8 +14,6 @@ module Contentful
 
     api_path "/api/image-galleries"
 
-    def self.contentful_content_type_id
-      "6ydFFHu0og4QmSeW6UucIK"
-    end
+    contentful_content_type "6ydFFHu0og4QmSeW6UucIK"
   end
 end

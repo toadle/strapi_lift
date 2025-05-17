@@ -41,6 +41,15 @@ module StrapiDocumentConnected
       @single_content_type
     end
 
+    def contentful_content_type(id)
+      @contentful_content_type_id = id
+    end
+
+    def contentful_content_type_id
+      raise "Contentful content type ID not set" unless @contentful_content_type_id
+      @contentful_content_type_id
+    end
+
     def rich_text(source:, target:)
       attr_accessor source
 

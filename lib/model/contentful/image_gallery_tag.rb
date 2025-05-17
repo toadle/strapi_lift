@@ -11,8 +11,6 @@ module Contentful
 
     api_path "/api/image-gallery-tags"
 
-    def self.contentful_content_type_id
-      "3ks1SSosbmACcEIOsCGsAI"
-    end
+    contentful_content_type "3ks1SSosbmACcEIOsCGsAI"
   end
 end

@@ -16,8 +16,6 @@ module Contentful
     api_path "/api/homepage"
     single_content_type!
 
-    def self.contentful_content_type_id
-      "42rOugxTn2akMskSggwqKE"
-    end
+    contentful_content_type "42rOugxTn2akMskSggwqKE"
   end
 end

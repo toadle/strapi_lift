@@ -27,8 +27,6 @@ module Contentful
 
     api_path "/api/articles"
 
-    def self.contentful_content_type_id
-      "5duKiNPsR20mgISegMYmwK"
-    end
+    contentful_content_type "5duKiNPsR20mgISegMYmwK"
   end
 end
